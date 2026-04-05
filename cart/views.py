@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from store.models import Product, Variation
 from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import transaction
 
 
 # 🔑 Session Cart ID
@@ -13,7 +12,7 @@ def _cart_id(request):
     return cart
 
 
-# 🎯 Get Product Variations (Reusable Function)
+# 🎯 Get Product Variations
 def get_product_variation(request, product):
     product_variation = []
     if request.method == 'POST':
@@ -31,7 +30,6 @@ def get_product_variation(request, product):
 
 
 # ➕ ADD TO CART
-@transaction.atomic
 def add_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     product_variation = get_product_variation(request, product)
@@ -63,7 +61,6 @@ def add_cart(request, product_id):
                 )
                 if product_variation:
                     item.variations.add(*product_variation)
-                item.save()
         else:
             item = CartItem.objects.create(
                 product=product,
@@ -72,11 +69,9 @@ def add_cart(request, product_id):
             )
             if product_variation:
                 item.variations.add(*product_variation)
-            item.save()
 
     else:
-        cart, created = Cart.objects.get_or_create(cart_id=_cart_id(request))
-
+        cart, _ = Cart.objects.get_or_create(cart_id=_cart_id(request))
         cart_items = CartItem.objects.filter(product=product, cart=cart)
 
         if cart_items.exists():
@@ -103,7 +98,6 @@ def add_cart(request, product_id):
                 )
                 if product_variation:
                     item.variations.add(*product_variation)
-                item.save()
         else:
             item = CartItem.objects.create(
                 product=product,
@@ -112,12 +106,11 @@ def add_cart(request, product_id):
             )
             if product_variation:
                 item.variations.add(*product_variation)
-            item.save()
 
     return redirect('cart')
 
 
-# ➖ REMOVE SINGLE QUANTITY
+# ➖ REMOVE SINGLE ITEM QUANTITY
 def remove_cart(request, product_id, cart_item_id):
     product = get_object_or_404(Product, id=product_id)
 
@@ -129,7 +122,7 @@ def remove_cart(request, product_id, cart_item_id):
                 id=cart_item_id
             )
         else:
-            cart, created = Cart.objects.get_or_create(cart_id=_cart_id(request))
+            cart, _ = Cart.objects.get_or_create(cart_id=_cart_id(request))
             cart_item = CartItem.objects.get(
                 product=product,
                 cart=cart,
@@ -160,7 +153,7 @@ def remove_cart_item(request, product_id, cart_item_id):
                 id=cart_item_id
             )
         else:
-            cart, created = Cart.objects.get_or_create(cart_id=_cart_id(request))
+            cart, _ = Cart.objects.get_or_create(cart_id=_cart_id(request))
             cart_item = CartItem.objects.get(
                 product=product,
                 cart=cart,
@@ -180,23 +173,25 @@ def cart(request):
     total = 0
     quantity = 0
     cart_items = []
-    TAX_RATE = 0.02
+    tax = 0
+    grand_total = 0
 
     try:
         if request.user.is_authenticated:
             cart_items = CartItem.objects.filter(user=request.user, is_active=True)
         else:
-            cart, created = Cart.objects.get_or_create(cart_id=_cart_id(request))
+            cart, _ = Cart.objects.get_or_create(cart_id=_cart_id(request))
             cart_items = CartItem.objects.filter(cart=cart, is_active=True)
 
-        total = sum(item.product.price * item.quantity for item in cart_items)
-        quantity = sum(item.quantity for item in cart_items)
+        for item in cart_items:
+            total += item.product.price * item.quantity
+            quantity += item.quantity
+
+        tax = (2 * total) / 100
+        grand_total = total + tax
 
     except ObjectDoesNotExist:
-        cart_items = []
-
-    tax = total * TAX_RATE
-    grand_total = total + tax
+        pass
 
     context = {
         'total': total,
