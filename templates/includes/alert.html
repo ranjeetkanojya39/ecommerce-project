@@ -1,0 +1,24 @@
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+        
+        <!-- Icon (optional) -->
+        {% if message.tags == 'success' %}
+            ✅
+        {% elif message.tags == 'error' %}
+            ❌
+        {% elif message.tags == 'warning' %}
+            ⚠️
+        {% else %}
+            ℹ️
+        {% endif %}
+        
+        <span class="ms-2">{{ message }}</span>
+
+        <!-- Close Button -->
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
