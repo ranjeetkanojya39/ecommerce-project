@@ -1,24 +1,39 @@
 {% if messages %}
-<div class="container mt-3">
+<div class="container mt-3" id="django-messages">
     {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 mb-3" role="alert" 
+         style="border-left: 5px solid 
+            {% if message.tags == 'success' %}#28a745{% elif message.tags == 'danger' or message.tags == 'error' %}#dc3545{% elif message.tags == 'warning' %}#ffc107{% else %}#17a2b8{% endif %}; 
+            border-radius: 8px; background-color: #fff;">
         
-        <!-- Icon (optional) -->
-        {% if message.tags == 'success' %}
-            ✅
-        {% elif message.tags == 'error' %}
-            ❌
-        {% elif message.tags == 'warning' %}
-            ⚠️
-        {% else %}
-            ℹ️
-        {% endif %}
-        
-        <span class="ms-2">{{ message }}</span>
+        <div class="d-flex align-items-center">
+            <div class="mr-3">
+                {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle text-success fa-lg"></i>
+                {% elif message.tags == 'danger' or message.tags == 'error' %}
+                    <i class="fas fa-times-circle text-danger fa-lg"></i>
+                {% elif message.tags == 'warning' %}
+                    <i class="fas fa-exclamation-triangle text-warning fa-lg"></i>
+                {% else %}
+                    <i class="fas fa-info-circle text-info fa-lg"></i>
+                {% endif %}
+            </div>
 
-        <!-- Close Button -->
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="text-dark">
+                <strong class="text-capitalize">{{ message.tags }}:</strong> {{ message }}
+            </div>
+
+            <button type="button" class="close ml-auto" data-dismiss="alert" aria-label="Close" style="outline: none;">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
     </div>
     {% endfor %}
 </div>
+
+<script>
+    setTimeout(function() {
+        $('#django-messages').fadeOut('slow');
+    }, 5000);
+</script>
 {% endif %}
