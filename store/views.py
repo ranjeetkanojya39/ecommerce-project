@@ -5,6 +5,7 @@ from cart.models import CartItem
 from cart.views import _cart_id
 from django.core.paginator import EmptyPage , PageNotAnInteger , Paginator
 from django.db.models import Q
+from django.http import HttpResponse
 def store(request , category_slug=None):
     categorys = None
     products = None
@@ -53,3 +54,8 @@ def search(request):
     }
 
     return render(request, 'store/store.html', context)
+
+
+def place_order(request):
+    if request.method == 'POST':
+        return HttpResponse("Order placed successfully")

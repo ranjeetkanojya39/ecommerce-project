@@ -12,6 +12,9 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 
+from carts.views import _cart_id
+from cart.models import  Cart, CartItem
+
 
 # ================= REGISTER =================
 def register(request):
