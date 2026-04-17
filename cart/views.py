@@ -181,7 +181,7 @@ def cart(request):
         if request.user.is_authenticated:
             cart_items = CartItem.objects.filter(user=request.user, is_active=True)
         else:
-            cart, _ = Cart.objects.get_or_create(cart_id=_cart_id(request))
+            cart,_ = Cart.objects.get_or_create(cart_id=_cart_id(request))
             cart_items = CartItem.objects.filter(cart=cart, is_active=True)
 
         for item in cart_items:

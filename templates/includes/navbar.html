@@ -1,77 +1,128 @@
 {% load static %}
 
-<div class="container-fluid py-2 text-center" style="background: linear-gradient(to right, #3167EB, #7A7A7A); position: sticky; top: 0; z-index: 1030;">
-    <a href="{% url 'store' %}" class="text-white text-uppercase font-weight-bold small" style="letter-spacing: 1px; text-decoration: none;">
+<!-- Top Sale Banner -->
+<div class="container-fluid py-2 text-center text-white"
+     style="background: linear-gradient(to right, #3167EB, #7A7A7A); position: sticky; top: 0; z-index: 1030;">
+    <a href="{% url 'store' %}" class="text-white text-uppercase font-weight-bold small"
+       style="letter-spacing: 1px; text-decoration: none;">
         🔥 50% Weekend Sale - Shop Now 🔥
     </a>
 </div>
 
-<header class="section-header border-bottom bg-white">
+<!-- Main Header -->
+<header class="section-header border-bottom bg-white" 
+        style="position: sticky; top: 40px; z-index: 1020;">
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light px-0">
-            
+
+            <!-- Logo -->
             <a class="navbar-brand mr-lg-5" href="{% url 'home' %}">
-                <img class="logo" src="{% static 'images/logo.jpg' %}" style="max-height: 45px;" alt="GreatKart">
+                <img src="{% static 'images/logo.jpg' %}" 
+                     style="max-height: 45px;" 
+                     alt="GreatKart" 
+                     loading="lazy">
             </a>
 
+            <!-- Right Side (Cart + Toggle) -->
             <div class="d-flex order-lg-3 ml-auto align-items-center">
+
+                <!-- Cart -->
                 <a href="{% url 'cart' %}" class="widget-header mr-3 position-relative text-dark">
-                    <div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart text-primary"></i></div>
-                    <span class="badge badge-pill badge-danger notify" style="position: absolute; top: -5px; right: -5px;">{{ cart_count }}</span>
+                    <div class="icon icon-sm rounded-circle border">
+                        <i class="fa fa-shopping-cart text-primary"></i>
+                    </div>
+
+                    {% if cart_count > 0 %}
+                    <span class="badge badge-pill badge-danger"
+                          style="position: absolute; top: -5px; right: -5px;">
+                        {{ cart_count }}
+                    </span>
+                    {% endif %}
                 </a>
-                
+
+                <!-- Mobile Toggle -->
                 <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#main_nav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </div>
 
+            <!-- Navbar Content -->
             <div class="collapse navbar-collapse order-lg-2" id="main_nav">
-                
+
+                <!-- Left Links -->
                 <ul class="navbar-nav mr-auto">
+
+                    <!-- Categories -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle font-weight-bold" href="#" data-toggle="dropdown">All Categories</a>
+                        <a class="nav-link dropdown-toggle font-weight-bold"
+                           href="#"
+                           data-toggle="dropdown">
+                            All Categories
+                        </a>
+
                         <div class="dropdown-menu shadow-sm">
                             <a class="dropdown-item" href="{% url 'store' %}">All Products</a>
                             <div class="dropdown-divider"></div>
+
                             {% for category in links %}
-                                <a class="dropdown-item" href="{{ category.get_url }}">{{ category.category_name }}</a>
+                                <a class="dropdown-item" href="{{ category.get_url }}">
+                                    {{ category.category_name }}
+                                </a>
                             {% endfor %}
                         </div>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'store' %}">Store</a></li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'store' %}">Store</a>
+                    </li>
                 </ul>
 
-                <form action="{% url 'search' %}" class="mx-lg-4 my-3 my-lg-0 flex-grow-1" method="GET">
+                <!-- Search -->
+                <form action="{% url 'search' %}" method="GET"
+                      class="mx-lg-4 my-3 my-lg-0 flex-grow-1">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search products..." name="keyword" required>
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Search for products..."
+                               name="keyword"
+                               required>
+
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-primary" type="submit" aria-label="Search">
                                 <i class="fa fa-search"></i>
                             </button>
                         </div>
                     </div>
                 </form>
 
+                <!-- Right Links -->
                 <div class="navbar-nav ml-auto">
-                    {% if user.id is None %}
-                        <div class="nav-item d-flex align-items-center">
-                            <a class="nav-link py-0 font-weight-bold" href="{% url 'login' %}">Sign In</a>
-                            <span class="text-muted">|</span>
-                            <a class="nav-link py-0 font-weight-bold" href="{% url 'register' %}">Register</a>
-                        </div>
-                    {% else %}
+
+                    {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle font-weight-bold" href="#" data-toggle="dropdown text-capitalize">Hi, {{user.first_name}}</a>
+                            <a class="nav-link dropdown-toggle font-weight-bold text-capitalize"
+                               href="#"
+                               data-toggle="dropdown">
+                                Hi, {{ user.first_name }}
+                            </a>
+
                             <div class="dropdown-menu dropdown-menu-right shadow-sm">
                                 <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a>
                             </div>
                         </li>
+                    {% else %}
+                        <div class="nav-item d-flex align-items-center">
+                            <a class="nav-link py-0 font-weight-bold" href="{% url 'login' %}">Sign In</a>
+                            <span class="text-muted mx-1">|</span>
+                            <a class="nav-link py-0 font-weight-bold" href="{% url 'register' %}">Register</a>
+                        </div>
                     {% endif %}
+
                 </div>
 
-            </div> 
+            </div>
         </nav>
-    </div> 
+    </div>
 </header>

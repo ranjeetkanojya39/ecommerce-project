@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect 
+from django.shortcuts import render, redirect
+from cart.views import _cart_id 
 from .forms import RegistrationForm
 from .models import Account
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 
 # Email verification imports
+
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -13,6 +15,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 
 #from carts.views import _cart_id
+
 from cart.models import  Cart, CartItem
 
 
@@ -84,6 +87,21 @@ def login_view(request):
         user = auth.authenticate(email=email, password=password)
 
         if user is not None:
+            try:
+                print('entering inside try block')
+                cart = Cart.objects.get(cart_id=_cart_id(request))
+                is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
+                print(is_cart_item_exists)
+                if is_cart_item_exists:
+                    cart_item = CartItem.objects.filter(cart=cart)
+                    print(cart_item)
+
+                    for item in cart_item:
+                        item.user = user
+                        item.save()
+            except:
+                print('entering inside except block')
+                pass
             auth.login(request, user)
             return redirect('home')
         else:

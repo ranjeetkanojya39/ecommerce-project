@@ -19,8 +19,8 @@ def counter(request):
                 cart_items = CartItem.objects.all().filter(cart=cart[:1])
             
             # 3. Loop karke total quantity calculate karein
-            for item in cart_items:
-                cart_count += item.quantity
+            for  cart_item in cart_items:
+                cart_count += cart_item.quantity
                 
         except Cart.DoesNotExist:
             cart_count = 0
