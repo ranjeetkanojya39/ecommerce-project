@@ -218,3 +218,9 @@ def resetPassword(request):
             return redirect('resetPassword')
 
     return render(request, 'accounts/resetPassword.html')
+
+
+
+@login_required(login_url='login')
+def my_orders(request):
+    return render(request, 'accounts/my_orders.html')
