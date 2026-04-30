@@ -46,7 +46,7 @@ def register(request):
             )
 
             user.phone_number = phone_number
-            user.is_active = False   # ❗ IMPORTANT (email verify hone tak inactive)
+            user.is_active = True   # ❗ IMPORTANT (email verify hone tak inactive)
             user.save()
 
             # ===== Email Verification =====
