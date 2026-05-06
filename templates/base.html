@@ -1,64 +1,636 @@
 
+
 {% load static %}
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="pragma" content="no-cache" />
-<meta http-equiv="cache-control" content="max-age=604800" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="utf-8">
+  <meta http-equiv="pragma" content="no-cache" />
+  <meta http-equiv="cache-control" content="max-age=604800" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<title>GreatKart | One of the Biggest Online Shopping Platform</title>
+  <title>GreatKart | One of the Biggest Online Shopping Platform</title>
 
-<link href="{% static 'images/favicon.ico' %}" rel="shortcut icon" type="image/x-icon">
+  <link href="{% static 'images/favicon.ico' %}" rel="shortcut icon" type="image/x-icon">
 
-<!-- jQuery -->
-<script src="{% static 'js/jquery-2.0.0.min.js' %}" type="text/javascript"></script>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- Bootstrap4 files-->
-<script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
-<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css"/>
+  <!-- Google Fonts: Playfair Display + DM Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<!-- Font awesome 5 -->
-<link href="{% static 'fonts/fontawesome/css/all.min.css' %}" type="text/css" rel="stylesheet">
+  <!-- Font Awesome 6 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-<!-- custom style -->
-<link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css"/>
-<link href="{% static 'css/responsive.css' %}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
+  <!-- Existing stylesheets -->
+  <link href="{% static 'css/ui.css' %}" rel="stylesheet">
+  <link href="{% static 'css/responsive.css' %}" rel="stylesheet" media="only screen and (max-width: 1200px)">
+  <link href="{% static 'css/custom.css' %}" rel="stylesheet">
 
-<link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --bg:           #0a0a0f;
+      --surface:      #111118;
+      --surface-2:    #1a1a24;
+      --border:       rgba(255,255,255,0.07);
+      --accent:       #e8c97e;          /* warm gold */
+      --accent-dim:   rgba(232,201,126,0.12);
+      --accent-glow:  rgba(232,201,126,0.35);
+      --text-primary: #f0ece3;
+      --text-muted:   #7a7888;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --radius:       14px;
+      --radius-sm:    8px;
+      --transition:   0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-<!-- custom javascript -->
-<script src="{% static 'js/script.js' %}" type="text/javascript"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="{% static 'js/jquery-3.3.1.min.js' %}" type="text/javascript"></script>
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { scroll-behavior: smooth; }
 
-<!-- PayPal Script -->
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+
+    /* ── Page Load Animation ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    .page-wrapper {
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ── Navbar ── */
+    .gk-navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(10, 10, 15, 0.82);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      transition: box-shadow var(--transition);
+    }
+    .gk-navbar.scrolled {
+      box-shadow: 0 4px 40px rgba(0,0,0,0.5);
+    }
+
+    /* Logo */
+    .gk-logo {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .gk-logo span {
+      color: var(--accent);
+    }
+    .gk-logo-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+
+    /* Search bar */
+    .gk-search {
+      flex: 1;
+      max-width: 480px;
+      position: relative;
+    }
+    .gk-search input {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.55rem 1rem 0.55rem 2.8rem;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .gk-search input::placeholder { color: var(--text-muted); }
+    .gk-search input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    .gk-search i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      pointer-events: none;
+    }
+
+    /* Nav actions */
+    .gk-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .gk-nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.45rem 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background var(--transition), border-color var(--transition), color var(--transition);
+      white-space: nowrap;
+    }
+    .gk-nav-btn:hover {
+      background: var(--surface-2);
+      border-color: var(--border);
+      color: var(--accent);
+    }
+    .gk-nav-btn.primary {
+      background: var(--accent);
+      color: #0a0a0f;
+      font-weight: 600;
+      border-color: var(--accent);
+    }
+    .gk-nav-btn.primary:hover {
+      background: #f0d48a;
+      color: #0a0a0f;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+
+    /* Cart badge */
+    .gk-cart-badge {
+      position: relative;
+    }
+    .gk-cart-badge .badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--accent);
+      color: #0a0a0f;
+      font-size: 0.6rem;
+      font-weight: 700;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Mobile hamburger */
+    .gk-hamburger {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    /* ── Category Strip ── */
+    .gk-categories {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .gk-categories::-webkit-scrollbar { display: none; }
+    .gk-categories-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 2rem;
+      width: max-content;
+    }
+    .gk-cat-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.7rem 1.1rem;
+      border-bottom: 2px solid transparent;
+      transition: color var(--transition), border-color var(--transition);
+      white-space: nowrap;
+    }
+    .gk-cat-link:hover, .gk-cat-link.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── Main Content ── */
+    .gk-main {
+      min-height: calc(100vh - 68px - 60px - 280px);
+      padding: 2.5rem 0;
+    }
+
+    /* ── Footer ── */
+    .gk-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .gk-footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      padding: 3.5rem 2rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .gk-footer-brand p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      line-height: 1.7;
+      margin-top: 0.75rem;
+      max-width: 280px;
+    }
+    .gk-footer-col h6 {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.04em;
+      margin-bottom: 1.25rem;
+    }
+    .gk-footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .gk-footer-links a {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: color var(--transition), padding-left var(--transition);
+      display: inline-block;
+    }
+    .gk-footer-links a:hover {
+      color: var(--accent);
+      padding-left: 4px;
+    }
+    .gk-footer-bottom {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .gk-footer-bottom p {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    .gk-social-links {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .gk-social-link {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+    }
+    .gk-social-link:hover {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ── Toast Notifications ── */
+    .gk-toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    /* ── Mobile Menu Drawer ── */
+    .gk-mobile-drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 1100;
+      visibility: hidden;
+    }
+    .gk-mobile-drawer.open { visibility: visible; }
+    .gk-drawer-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .gk-mobile-drawer.open .gk-drawer-overlay { opacity: 1; }
+    .gk-drawer-panel {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: min(340px, 90vw);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      transform: translateX(-100%);
+      transition: transform var(--transition);
+    }
+    .gk-mobile-drawer.open .gk-drawer-panel { transform: translateX(0); }
+    .gk-drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .gk-drawer-close {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color var(--transition);
+    }
+    .gk-drawer-close:hover { color: var(--accent); }
+    .gk-drawer-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .gk-drawer-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      transition: background var(--transition), color var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .gk-drawer-link:hover {
+      background: var(--surface-2);
+      color: var(--accent);
+    }
+    .gk-drawer-link i { width: 16px; text-align: center; font-size: 0.85rem; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .gk-search, .gk-categories { display: none; }
+      .gk-hamburger { display: flex; }
+      .gk-footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; padding: 2rem 1rem; }
+      .gk-footer-bottom { flex-direction: column; gap: 1rem; text-align: center; padding: 1rem; }
+      .gk-navbar { padding: 0 1rem; }
+    }
+    @media (max-width: 480px) {
+      .gk-footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="page-wrapper">
+
+  <!-- ── Navbar ── -->
+  <nav class="gk-navbar" id="gkNavbar">
+    <!-- Hamburger (mobile) -->
+    <button class="gk-hamburger" onclick="toggleDrawer()" aria-label="Menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- Logo -->
+    <a href="/" class="gk-logo">
+      Great<span>Kart</span><span class="gk-logo-dot"></span>
+    </a>
+
+    <!-- Search -->
+    <div class="gk-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Search products, brands, categories…">
+    </div>
+
+    <!-- Actions -->
+    <div class="gk-nav-actions">
+      <a href="/accounts/login/" class="gk-nav-btn">
+        <i class="fa-regular fa-user"></i> Login
+      </a>
+      <a href="/accounts/register/" class="gk-nav-btn primary">
+        Sign Up
+      </a>
+      <a href="/cart/" class="gk-nav-btn gk-cart-badge">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span class="badge">3</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── Category Strip ── -->
+  <div class="gk-categories">
+    <div class="gk-categories-inner">
+      <a href="#" class="gk-cat-link active"><i class="fa-solid fa-fire-flame-curved"></i> Trending</a>
+      <a href="#" class="gk-cat-link"><i class="fa-solid fa-shirt"></i> Fashion</a>
+      <a href="#" class="gk-cat-link"><i class="fa-solid fa-mobile-screen"></i> Electronics</a>
+      <a href="#" class="gk-cat-link"><i class="fa-solid fa-house"></i> Home & Living</a>
+      <a href="#" class="gk-cat-link"><i class="fa-solid fa-dumbbell"></i> Sports</a>
+      <a href="#" class="gk-cat-link"><i class="fa-solid fa-jar"></i> Beauty</a>
+      <a href="#" class="gk-cat-link"><i class="fa-solid fa-book"></i> Books</a>
+      <a href="#" class="gk-cat-link"><i class="fa-solid fa-gamepad"></i> Gaming</a>
+    </div>
+  </div>
+
+  <!-- ── Django include: navbar ── -->
+  {# {% include 'includes/navbar.html' %} — merged above; keep if needed #}
+
+  <!-- ── Main Content ── -->
+  <main class="gk-main">
+    {% block content %}
+    <!-- page content goes here -->
+    {% endblock %}
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="gk-footer">
+    <div class="gk-footer-top">
+      <div class="gk-footer-brand">
+        <a href="/" class="gk-logo" style="font-size:1.3rem;">Great<span>Kart</span><span class="gk-logo-dot"></span></a>
+        <p>India's modern marketplace — discover millions of products from trusted sellers, delivered fast to your door.</p>
+      </div>
+      <div class="gk-footer-col">
+        <h6>Shop</h6>
+        <ul class="gk-footer-links">
+          <li><a href="#">New Arrivals</a></li>
+          <li><a href="#">Best Sellers</a></li>
+          <li><a href="#">Deals & Offers</a></li>
+          <li><a href="#">Gift Cards</a></li>
+        </ul>
+      </div>
+      <div class="gk-footer-col">
+        <h6>Account</h6>
+        <ul class="gk-footer-links">
+          <li><a href="/accounts/login/">Sign In</a></li>
+          <li><a href="/accounts/register/">Register</a></li>
+          <li><a href="#">My Orders</a></li>
+          <li><a href="#">Wishlist</a></li>
+        </ul>
+      </div>
+      <div class="gk-footer-col">
+        <h6>Help</h6>
+        <ul class="gk-footer-links">
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="gk-footer-bottom">
+      <p>© 2025 GreatKart. All rights reserved.</p>
+      <div class="gk-social-links">
+        <a href="#" class="gk-social-link"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="gk-social-link"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" class="gk-social-link"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="gk-social-link"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  {# {% include 'includes/footer.html' %} — merged above; keep if needed #}
+
+</div><!-- /page-wrapper -->
+
+<!-- ── Mobile Drawer ── -->
+<div class="gk-mobile-drawer" id="mobileDrawer">
+  <div class="gk-drawer-overlay" onclick="toggleDrawer()"></div>
+  <div class="gk-drawer-panel">
+    <div class="gk-drawer-header">
+      <a href="/" class="gk-logo" style="font-size:1.2rem;">Great<span>Kart</span><span class="gk-logo-dot"></span></a>
+      <button class="gk-drawer-close" onclick="toggleDrawer()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <!-- Search inside drawer -->
+    <div class="gk-search" style="display:block; max-width:100%;">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Search…">
+    </div>
+    <nav class="gk-drawer-nav">
+      <a href="#" class="gk-drawer-link"><i class="fa-solid fa-fire-flame-curved"></i> Trending</a>
+      <a href="#" class="gk-drawer-link"><i class="fa-solid fa-shirt"></i> Fashion</a>
+      <a href="#" class="gk-drawer-link"><i class="fa-solid fa-mobile-screen"></i> Electronics</a>
+      <a href="#" class="gk-drawer-link"><i class="fa-solid fa-house"></i> Home & Living</a>
+      <a href="#" class="gk-drawer-link"><i class="fa-solid fa-dumbbell"></i> Sports</a>
+      <a href="#" class="gk-drawer-link"><i class="fa-solid fa-gamepad"></i> Gaming</a>
+    </nav>
+    <div style="margin-top:auto; display:flex; flex-direction:column; gap:.5rem;">
+      <a href="/accounts/login/" class="gk-nav-btn" style="justify-content:center;"><i class="fa-regular fa-user"></i> Login</a>
+      <a href="/accounts/register/" class="gk-nav-btn primary" style="justify-content:center;">Create Account</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Scripts ── -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- PayPal SDK -->
 <script src="https://www.paypal.com/sdk/js?client-id=AVBSMqNtoZ1IUO6lrSe6-vm9AIV1ZKN8CgXu_nINRs80xELRs650mh3yR62groIUg-GCe59Od_EFOG6O&currency=USD"></script>
 
-<script type="text/javascript">
-/// some script
+<!-- Legacy scripts (keep if needed by existing pages) -->
+<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 
-// jquery ready start
-$(document).ready(function() {
-	// jQuery code
+<script>
+  // ── Navbar scroll shadow ──
+  const navbar = document.getElementById('gkNavbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
 
-});
-// jquery end
+  // ── Mobile drawer ──
+  function toggleDrawer() {
+    document.getElementById('mobileDrawer').classList.toggle('open');
+    document.body.style.overflow =
+      document.getElementById('mobileDrawer').classList.contains('open') ? 'hidden' : '';
+  }
+
+  // ── jQuery ready (existing code stays here) ──
+  $(document).ready(function () {
+    // your existing jQuery code here
+  });
 </script>
 
-</head>
-<body>
+{% block extra_js %}{% endblock %}
 
-  <!-- navbar -->
-  {% include 'includes/navbar.html' %}
-
-  {% block content %}
-  <!-- content -->
-  {% endblock %}
-
-
-<!-- footer -->
-{% include 'includes/footer.html' %}
+</body>
+</html>

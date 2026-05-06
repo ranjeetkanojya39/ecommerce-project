@@ -1,3 +1,5 @@
+
+{% load static %}
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
@@ -8,24 +10,33 @@
 
 <title>GreatKart | One of the Biggest Online Shopping Platform</title>
 
-<link href="images/favicon.ico" rel="shortcut icon" type="image/x-icon">
+<link href="{% static 'images/favicon.ico' %}" rel="shortcut icon" type="image/x-icon">
 
 <!-- jQuery -->
-<script src="js/jquery-2.0.0.min.js" type="text/javascript"></script>
+<script src="{% static 'js/jquery-2.0.0.min.js' %}" type="text/javascript"></script>
 
 <!-- Bootstrap4 files-->
-<script src="js/bootstrap.bundle.min.js" type="text/javascript"></script>
-<link href="css/bootstrap.css" rel="stylesheet" type="text/css"/>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
+<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css"/>
 
 <!-- Font awesome 5 -->
-<link href="fonts/fontawesome/css/all.min.css" type="text/css" rel="stylesheet">
+<link href="{% static 'fonts/fontawesome/css/all.min.css' %}" type="text/css" rel="stylesheet">
 
 <!-- custom style -->
-<link href="css/ui.css" rel="stylesheet" type="text/css"/>
-<link href="css/responsive.css" rel="stylesheet" media="only screen and (max-width: 1200px)" />
+<link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css"/>
+<link href="{% static 'css/responsive.css' %}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
+
+<link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <!-- custom javascript -->
-<script src="js/script.js" type="text/javascript"></script>
+<script src="{% static 'js/script.js' %}" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'js/jquery-3.3.1.min.js' %}" type="text/javascript"></script>
+
+
+<!-- PayPal Script -->
+<script src="https://www.paypal.com/sdk/js?client-id=AVBSMqNtoZ1IUO6lrSe6-vm9AIV1ZKN8CgXu_nINRs80xELRs650mh3yR62groIUg-GCe59Od_EFOG6O&currency=USD"></script>
 
 <script type="text/javascript">
 /// some script
@@ -34,98 +45,37 @@
 $(document).ready(function() {
 	// jQuery code
 
-}); 
+});
 // jquery end
 </script>
 
 </head>
 <body>
 
+  <!-- navbar -->
+  {% include 'includes/navbar.html' %}
 
-<header class="section-header">
-<nav class="navbar p-md-0 navbar-expand-sm navbar-light border-bottom">
-<div class="container">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop4" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarTop4">
-    <ul class="navbar-nav mr-auto">
-    	<li class="nav-item dropdown">
-		 	<a href="#" class="nav-link">   English </a>
-		    
-		</li>
-		<li class="nav-item dropdown">
-			<a href="#" class="nav-link"> USD </a>
-		</li>
-    </ul>
-    <ul class="navbar-nav">
-		<li><a href="#" class="nav-link"> <i class="fa fa-envelope"></i> Email </a></li>
-		<li><a href="#" class="nav-link"> <i class="fa fa-phone"></i> Call us </a></li>
-	</ul> <!-- list-inline //  -->
-  </div> <!-- navbar-collapse .// -->
-</div> <!-- container //  -->
-</nav>
+  {% block content %}
+  <!-- content -->
+  {% endblock %}
 
-<section class="header-main border-bottom">
-	<div class="container">
-<div class="row align-items-center">
-	<div class="col-lg-2 col-md-3 col-6">
-		<a href="./" class="brand-wrap">
-			<img class="logo" src="./images/logo.png">
-		</a> <!-- brand-wrap.// -->
-	</div>
-	<div class="col-lg col-sm col-md col-6 flex-grow-0">
-		<div class="category-wrap dropdown d-inline-block float-right">
-			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> 
-				<i class="fa fa-bars"></i> All category 
-			</button>
-			<div class="dropdown-menu">
-				<a class="dropdown-item" href="#">Machinery / Mechanical Parts / Tools </a>
-				<a class="dropdown-item" href="#">Consumer Electronics / Home Appliances </a>
-				<a class="dropdown-item" href="#">Auto / Transportation</a>
-				<a class="dropdown-item" href="#">Apparel / Textiles / Timepieces </a>
-				<a class="dropdown-item" href="#">Home & Garden / Construction / Lights </a>
-				<a class="dropdown-item" href="#">Beauty & Personal Care / Health </a> 
-			</div>
-		</div>  <!-- category-wrap.// -->
-	</div> <!-- col.// -->
-	<a href="./store.html" class="btn btn-outline-primary">Store</a>
-	<div class="col-lg  col-md-6 col-sm-12 col">
-		<form action="#" class="search">
-			<div class="input-group w-100">
-			    <input type="text" class="form-control" style="width:60%;" placeholder="Search">
-			    
-			    <div class="input-group-append">
-			      <button class="btn btn-primary" type="submit">
-			        <i class="fa fa-search"></i>
-			      </button>
-			    </div>
-		    </div>
-		</form> <!-- search-wrap .end// -->
-	</div> <!-- col.// -->
-	<div class="col-lg-3 col-sm-6 col-8 order-2 order-lg-3">
-				<div class="d-flex justify-content-end mb-3 mb-lg-0">
-					<div class="widget-header">
-						<small class="title text-muted">Welcome guest!</small>
-						<div> 
-							<a href="./signin.html">Sign in</a> <span class="dark-transp"> | </span>
-							<a href="./register.html"> Register</a>
-						</div>
-					</div>
-					<a href="./cart.html" class="widget-header pl-3 ml-3">
-						<div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></div>
-						<span class="badge badge-pill badge-danger notify">0</span>
-					</a>
-				</div> <!-- widgets-wrap.// -->
-			</div> <!-- col.// -->
-</div> <!-- row.// -->
-	</div> <!-- container.// -->
-</section> <!-- header-main .// -->
+
+<!-- footer -->
+{% include 'includes/footer.html' %}
 
 
 
 
-</header> <!-- section-header.// -->
+
+base end
+
+
+home start
+
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
 
 
 <!-- ========================= SECTION MAIN ========================= -->
@@ -133,7 +83,7 @@ $(document).ready(function() {
 <div class="container">
 
 <div class="intro-banner-wrap">
-	<img src="images/banners/1.jpg" class="img-fluid rounded">
+	<img src="{% static 'images/banners/cover.jpg' %}" class="img-fluid rounded">
 </div>
 
 </div> <!-- container //  -->
@@ -145,114 +95,440 @@ $(document).ready(function() {
 <div class="container">
 
 <header class="section-heading">
-	<a href="./store.html" class="btn btn-outline-primary float-right">See all</a>
+	<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
 	<h3 class="section-title">Popular products</h3>
 </header><!-- sect-heading -->
 
 	
 <div class="row">
+	{% for product in products%}
 	<div class="col-md-3">
 		<div class="card card-product-grid">
-			<a href="./product-detail.html" class="img-wrap"> <img src="images/items/1.jpg"> </a>
+			<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{product.images.url}}"> </a>
 			<figcaption class="info-wrap">
-				<a href="./product-detail.html" class="title">Just another product name</a>
-				<div class="price mt-1">$179.00</div> <!-- price-wrap.// -->
+				<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
+				<div class="price mt-1">${{ product.price }}</div> <!-- price-wrap.// -->
 			</figcaption>
 		</div>
 	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="./product-detail.html" class="img-wrap"> <img src="images/items/2.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="./product-detail.html" class="title">Some item name here</a>
-				<div class="price mt-1">$280.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="./product-detail.html" class="img-wrap"> <img src="images/items/3.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="./product-detail.html" class="title">Great product name here</a>
-				<div class="price mt-1">$56.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="./product-detail.html" class="img-wrap"> <img src="images/items/4.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="./product-detail.html" class="title">Just another product name</a>
-				<div class="price mt-1">$179.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="./product-detail.html" class="img-wrap"> <img src="images/items/5.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="./product-detail.html" class="title">Just another product name</a>
-				<div class="price mt-1">$179.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="./product-detail.html" class="img-wrap"> <img src="images/items/6.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="./product-detail.html" class="title">Some item name here</a>
-				<div class="price mt-1">$280.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="./product-detail.html" class="img-wrap"> <img src="images/items/7.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="./product-detail.html" class="title">Great product name here</a>
-				<div class="price mt-1">$56.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="./product-detail.html" class="img-wrap"> <img src="images/items/9.jpg"> </a>
-			<figcaption class="info-wrap">
-				<a href="./product-detail.html" class="title">Just another product name</a>
-				<div class="price mt-1">$179.00</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-</div> <!-- row.// -->
-
-</div><!-- container // -->
-</section>
-<!-- ========================= SECTION  END// ========================= -->
-
-
-
-
-<!-- ========================= FOOTER ========================= -->
-<footer class="section-footer border-top">
-	<div class="container">
-		<section class="footer-bottom border-top row">
-			<div class="col-md-2">
-				<p class="text-muted"> &copy 2019 Company name </p>
-			</div>
-			<div class="col-md-8 text-md-center">
-				<span  class="px-2">info@pixsellz.io</span>
-				<span  class="px-2">+879-332-9375</span>
-				<span  class="px-2">Street name 123, Avanue abc</span>
-			</div>
-			<div class="col-md-2 text-md-right text-muted">
-				<i class="fab fa-lg fa-cc-visa"></i>
-				<i class="fab fa-lg fa-cc-paypal"></i>
-				<i class="fab fa-lg fa-cc-mastercard"></i>
-			</div>
-		</section>
+	{% endfor %}
+	</div>
+		
 	</div><!-- //container -->
-</footer>
+	</section>
+
 <!-- ========================= FOOTER END // ========================= -->
 
 </body>
 </html>
+
+{% endblock  %}
+
+
+
+project details
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg-light">
+<div class="container">
+
+<div class="card shadow-sm border-0">
+    <div class="row no-gutters">
+        <aside class="col-md-6 border-right">
+            <article class="gallery-wrap p-4 text-center"> 
+                <div class="img-big-wrap">
+                   <a href="#"><img src="{{ single_product.images.url }}" class="img-fluid rounded" style="max-height: 500px;"></a>
+                </div> 
+            </article> 
+        </aside>
+
+        <main class="col-md-6">
+            <form action="{% url 'add_cart' single_product.id %}" method="POST">
+                {% csrf_token %}
+                <article class="content-body p-5">
+
+                    <h2 class="title font-weight-bold text-dark">{{ single_product.product_name }}</h2>
+                    
+                    <div class="rating-wrap mb-3">
+                        <ul class="rating-stars list-unstyled d-inline-block">
+                            <li style="width:80%" class="stars-active"> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> </li>
+                            <li> <i class="fa fa-star text-muted"></i> <i class="fa fa-star text-muted"></i> <i class="fa fa-star text-muted"></i> <i class="fa fa-star text-muted"></i> <i class="fa fa-star text-muted"></i> </li>
+                        </ul>
+                        <span class="label-rating text-muted ml-2"> (12 reviews)</span>
+                    </div>
+
+                    <div class="mb-4"> 
+                        <var class="price h3 text-primary font-weight-bold">${{ single_product.price }}</var> 
+                    </div> 
+
+                    <p class="text-secondary">{{ single_product.description }}</p>
+                    <hr>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="font-weight-bold">Choose Color</h6>
+                            <select name="color" class="form-control custom-select" required>
+                                <option value="" disabled selected>Select Color</option>
+                                {% for i in single_product.variation_set.all %}
+                                    {% if i.variation_category == 'color' %}
+                                        <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <h6 class="font-weight-bold">Select Size</h6>
+                            <select name="size" class="form-control custom-select" required>
+                                <option value="" disabled selected>Select Size</option>
+                                {% for i in single_product.variation_set.all %}
+                                    {% if i.variation_category == 'size' %}
+                                        <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select> 
+                        </div>
+                    </div> 
+
+                    <hr>
+
+                    {% if single_product.stock <= 0 %}
+                        <div class="alert alert-danger py-2 px-3">
+                            <i class="fa fa-exclamation-triangle"></i> Out of Stock
+                        </div>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary btn-lg btn-block shadow"> 
+                            <span class="text">Add to Cart</span> <i class="fas fa-shopping-cart ml-2"></i>  
+                        </button>
+                    {% endif %}
+
+                </article> 
+            </form>
+        </main> 
+    </div> 
+</div> 
+<br>
+
+<div class="row">
+    <div class="col-md-9">
+        <header class="section-heading mb-4">
+            <h3 class="font-weight-bold">Customer Reviews</h3>  
+        </header>
+
+        <article class="box mb-3 bg-white p-4 shadow-sm rounded border">
+            <div class="icontext w-100">
+                <img src="{% static './images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle border">
+                <div class="text pl-3">
+                    <span class="date text-muted float-md-right small">24.04.2026</span>  
+                    <h6 class="mb-0 font-weight-bold">Mike John</h6>
+                    <div class="rating-stars small">
+                        <i class="fa fa-star text-warning"></i><i class="fa fa-star text-warning"></i><i class="fa fa-star text-warning"></i><i class="fa fa-star text-warning"></i>
+                    </div>
+                </div>
+            </div> 
+            <div class="mt-3">
+                <p class="text-secondary">
+                    The quality of the material is amazing. Perfect fit and very comfortable for daily wear. Highly recommended!
+                </p>     
+            </div>
+        </article>
+    </div> 
+</div> 
+
+</div> 
+</section>
+
+{% endblock %}
+
+
+store 
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-pagetop bg-primary py-5">
+    <div class="container">
+        {% if 'search' in request.path %}
+            <h2 class="title-page text-white font-weight-bold">Search Results</h2>
+        {% else %}
+            <h2 class="title-page text-white font-weight-bold">Explore Our Store</h2>
+        {% endif %}
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb bg-transparent p-0">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white-50">Home</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Store</li>
+          </ol>
+        </nav>
+    </div> </section>
+<style>
+    .card-product-grid { margin-bottom: 30px; border: none; transition: 0.3s; border-radius: 10px; overflow: hidden; }
+    .card-product-grid:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .img-wrap { border-radius: 10px 10px 0 0; }
+    .list-menu li { margin-bottom: 8px; }
+    .list-menu a { color: #555; transition: 0.2s; text-decoration: none; }
+    .list-menu a:hover { color: #3167EB; padding-left: 5px; }
+    .pagination .page-item.active .page-link { background-color: #3167EB; border-color: #3167EB; }
+</style>
+
+<section class="section-content padding-y bg-light">
+    <div class="container">
+
+        <div class="row">
+            <aside class="col-md-3">
+                <div class="card border-0 shadow-sm mb-3">
+                    <article class="filter-group">
+                        <header class="card-header bg-white border-0">
+                            <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true">
+                                <i class="icon-control fa fa-chevron-down float-right text-muted small"></i>
+                                <h6 class="title font-weight-bold text-dark">Categories</h6>
+                            </a>
+                        </header>
+                        <div class="filter-content collapse show" id="collapse_1">
+                            <div class="card-body pt-0">
+                                <ul class="list-menu list-unstyled">
+                                    <li><a href="{% url 'store' %}"><i class="fa fa-angle-right mr-2 text-primary"></i> All Products</a></li>
+                                    {% for category in links %}
+                                        <li><a href="{{ category.get_url }}"><i class="fa fa-angle-right mr-2 text-muted"></i> {{ category.category_name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div> </div>
+                    </article> </div> </aside> <main class="col-md-9">
+                <header class="border-bottom mb-4 pb-3">
+                    <div class="form-inline d-flex justify-content-between">
+                        <span class="mr-md-auto text-muted">Found <b>{{ product_count }}</b> items </span>
+                        <select class="form-control form-control-sm border-0 shadow-sm px-3">
+                            <option>Latest Items</option>
+                            <option>Trending</option>
+                            <option>Most Popular</option>
+                        </select>
+                    </div>
+                </header>
+
+                <div class="row">
+                    {% if products %}
+                        {% for product in products %}
+                        <div class="col-md-4 col-6"> <figure class="card card-product-grid shadow-sm h-100">
+                                <div class="img-wrap p-3 bg-white text-center">
+                                    <a href="{{ product.get_url }}">
+                                        {% if product.images %}
+                                            <img src="{{ product.images.url }}" class="img-fluid" style="max-height: 200px; object-fit: contain;">
+                                        {% endif %}
+                                    </a>
+                                </div> <figcaption class="info-wrap p-3 border-top">
+                                    <div class="fix-height mb-2" style="min-height: 50px;">
+                                        <a href="{{ product.get_url }}" class="title text-dark font-weight-bold h6">{{ product.product_name }}</a>
+                                        <div class="price-wrap mt-1 text-primary">
+                                            <span class="price font-weight-bold">$ {{ product.price }}</span>
+                                        </div> </div>
+                                    <a href="{{ product.get_url }}" class="btn btn-block btn-outline-primary btn-sm">
+                                        <i class="fa fa-eye"></i> View Details
+                                    </a>
+                                </figcaption>
+                            </figure>
+                        </div> {% endfor %}
+                    {% else %}
+                        <div class="col-12 text-center py-5">
+                            <i class="fa fa-search fa-4x text-muted mb-3" style="opacity: 0.2;"></i>
+                            <h2 class="text-muted">No result found.</h2>
+                            <p class="text-muted">Try adjusting your search or filters.</p>
+                            <a href="{% url 'store' %}" class="btn btn-primary">Back to Store</a>
+                        </div>
+                    {% endif %}
+                </div> <nav class="mt-4 d-flex justify-content-center" aria-label="Page navigation">
+                    {% if products.has_other_pages %}
+                      <ul class="pagination pagination-flat">
+                        {% if products.has_previous %}
+                            <li class="page-item"><a class="page-link border-0 shadow-sm mx-1 rounded" href="?page={{products.previous_page_number}}">Prev</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><a class="page-link border-0 shadow-sm mx-1 rounded" href="#">Prev</a></li>
+                        {% endif %}
+
+                        {% for i in products.paginator.page_range %}
+                            {% if products.number == i %}
+                                <li class="page-item active"><a class="page-link border-0 shadow-sm mx-1 rounded text-white" href="#">{{i}}</a></li>
+                            {% else %}
+                                <li class="page-item"><a class="page-link border-0 shadow-sm mx-1 rounded text-dark" href="?page={{i}}">{{i}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if products.has_next %}
+                            <li class="page-item"><a class="page-link border-0 shadow-sm mx-1 rounded" href="?page={{products.next_page_number}}">Next</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><a class="page-link border-0 shadow-sm mx-1 rounded" href="#">Next</a></li>
+                        {% endif %}
+                      </ul>
+                    {% endif %}
+                </nav>
+
+            </main> </div>
+
+    </div> </section>
+{% endblock %}
+
+
+cart
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg-light">
+    <div class="container">
+
+        {% if not cart_items %}
+            <div class="text-center py-5 shadow-sm bg-white rounded">
+                <div class="mb-4">
+                    <i class="fa fa-shopping-cart fa-5x text-muted"></i>
+                </div>
+                <h2 class="font-weight-bold">Your Shopping Cart is Empty</h2>
+                <p class="text-muted">Looks like you haven't added anything to your cart yet.</p>
+                <br>
+                <a href="{% url 'store' %}" class="btn btn-primary btn-lg px-5">Start Shopping Now</a>
+            </div>
+        {% else %}
+        
+        <h4 class="mb-4">Review Your Cart Items</h4>
+
+        <div class="row">
+            <aside class="col-lg-9">
+                <div class="card border-0 shadow-sm">
+                    <div class="table-responsive"> <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted bg-white border-bottom">
+                                <tr class="small text-uppercase">
+                                    <th scope="col">Product</th>
+                                    <th scope="col" width="140">Quantity</th>
+                                    <th scope="col" width="120">Price</th>
+                                    <th scope="col" class="text-right" width="150"> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cart_item in cart_items %}
+                                <tr class="border-bottom">
+                                    <td>
+                                        <figure class="itemside align-items-center">
+                                            <div class="aside">
+                                                <img src="{{ cart_item.product.images.url }}" class="img-sm rounded border">
+                                            </div>
+                                            <figcaption class="info pl-3">
+                                                <a href="{{ cart_item.product.get_url }}" class="title text-dark font-weight-bold">{{ cart_item.product.product_name }}</a>
+                                                <p class="text-muted small">
+                                                    {% if cart_item.variations.all %}
+                                                        {% for item in cart_item.variations.all %}
+                                                            <span class="badge badge-light border">{{ item.variation_category | capfirst }}: {{ item.variation_value | capfirst }}</span>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </p>
+                                            </figcaption>
+                                        </figure>
+                                    </td>
+                                    <td> 
+                                        <div class="col px-0"> 
+                                            <div class="input-group input-spinner">
+                                                <div class="input-group-prepend">
+                                                    <a href="{% url 'remove_cart' cart_item.product.id cart_item.id %}" class="btn btn-light border" type="button"> <i class="fa fa-minus"></i> </a>
+                                                </div>
+                                                <input type="text" class="form-control text-center bg-white" value="{{ cart_item.quantity }}" readonly>
+                                                <div class="input-group-append">
+                                                    <form action="{% url 'add_cart' cart_item.product.id %}" method="POST">
+                                                        {% csrf_token %}
+                                                        {% for item in cart_item.variations.all %}
+                                                            <input type="hidden" name="{{ item.variation_category | lower }}" value="{{ item.variation_value | capfirst }}">
+                                                        {% endfor %}
+                                                        <button class="btn btn-light border" type="submit"> <i class="fa fa-plus"></i> </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td> 
+                                        <div class="price-wrap"> 
+                                            <var class="price font-weight-bold h6">$ {{ cart_item.sub_total }}</var> <br>
+                                            <small class="text-muted small">$ {{ cart_item.product.price }} each</small> 
+                                        </div>
+                                    </td>
+                                    <td class="text-right"> 
+                                        <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}" onclick="return confirm('Are you sure you want to delete this item?')" class="btn btn-outline-danger btn-sm"> <i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+								<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal{{ cart_item.id }}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-3 shadow">
+      
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-danger">
+          <i class="fa fa-exclamation-triangle"></i> Confirm Delete
+        </h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <div class="modal-body text-center">
+        <p class="mb-2 font-weight-bold">
+          Are you sure you want to remove this item?
+        </p>
+        <small class="text-muted">
+          This action cannot be undone.
+        </small>
+      </div>
+      
+      <div class="modal-footer border-0 justify-content-center">
+        <button type="button" class="btn btn-light px-4" data-dismiss="modal">
+          Cancel
+        </button>
+        
+        <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}" 
+           class="btn btn-danger px-4">
+          Yes, Delete
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div> </aside> <aside class="col-lg-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="mb-3">Order Summary</h5>
+                        <dl class="dlist-align">
+                          <dt>Total Price:</dt>
+                          <dd class="text-right">$ {{total}}</dd>
+                        </dl>
+                        <dl class="dlist-align">
+                          <dt>Tax (GST):</dt>
+                          <dd class="text-right">$ {{tax}}</dd>
+                        </dl>
+                        <hr>
+                        <dl class="dlist-align">
+                          <dt class="h5">Grand Total:</dt>
+                          <dd class="text-right text-dark b"><strong>$ {{grand_total}}</strong></dd>
+                        </dl>
+                        <hr>
+                        <p class="text-center mb-3">
+                            <img src="{% static './images/misc/payments.png' %}" height="26">
+                        </p>
+                        <a href="{% url 'checkout' %}" class="btn btn-primary btn-block btn-lg shadow"> 
+                            <i class="fa fa-lock"></i> Secure Checkout 
+                        </a>
+                        <a href="{% url 'store' %}" class="btn btn-outline-secondary btn-block mt-2">
+                             Continue Shopping
+                        </a>
+                    </div> </div> </aside> </div> {% endif %}
+
+    </div> 
+</section>
+
+
+
+	
+
+{% endblock %}

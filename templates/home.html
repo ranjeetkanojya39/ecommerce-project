@@ -1,51 +1,688 @@
-{% extends "base.html" %}
 
+
+
+{% extends "base.html" %}
 {% load static %}
+
 {% block content %}
 
+<style>
+  /* ── Page-level tokens (inherits base.html vars) ── */
+  :root {
+    --card-bg:      #13131c;
+    --card-border:  rgba(255,255,255,0.06);
+    --card-hover:   #1a1a28;
+    --tag-bg:       rgba(232,201,126,0.1);
+  }
 
-<!-- ========================= SECTION MAIN ========================= -->
-<section class="section-intro padding-y-sm">
-<div class="container">
+  /* ────────────────────────────────────────────
+     HERO BANNER
+  ──────────────────────────────────────────── */
+  .gk-hero {
+    position: relative;
+    overflow: hidden;
+    margin: 2rem auto;
+    max-width: 1280px;
+    padding: 0 1.5rem;
+  }
 
-<div class="intro-banner-wrap">
-	<img src="{% static 'images/banners/cover.jpg' %}" class="img-fluid rounded">
+  .gk-hero-inner {
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    min-height: 420px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .gk-hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 8s ease;
+  }
+  .gk-hero-inner:hover .gk-hero-img {
+    transform: scale(1.04);
+  }
+
+  /* gradient overlay */
+  .gk-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(10,10,15,0.85) 0%,
+      rgba(10,10,15,0.4) 55%,
+      transparent 100%
+    );
+  }
+
+  /* decorative gold orb */
+  .gk-hero-orb {
+    position: absolute;
+    top: -80px;
+    left: -80px;
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle, rgba(232,201,126,0.18) 0%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
+  }
+
+  .gk-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 3rem;
+    max-width: 520px;
+  }
+
+  .gk-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(232,201,126,0.15);
+    border: 1px solid rgba(232,201,126,0.3);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.85rem;
+    border-radius: 50px;
+    margin-bottom: 1.2rem;
+  }
+  .gk-hero-eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  .gk-hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+  .gk-hero-title em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .gk-hero-sub {
+    color: rgba(240,236,227,0.7);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+
+  .gk-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .gk-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.7rem 1.5rem;
+    border-radius: 50px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.25s ease;
+  }
+  .gk-btn-primary {
+    background: var(--accent);
+    color: #0a0a0f;
+    box-shadow: 0 4px 20px rgba(232,201,126,0.3);
+  }
+  .gk-btn-primary:hover {
+    background: #f0d48a;
+    box-shadow: 0 6px 30px rgba(232,201,126,0.5);
+    transform: translateY(-2px);
+    color: #0a0a0f;
+  }
+  .gk-btn-ghost {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+  }
+  .gk-btn-ghost:hover {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.25);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  /* Hero stats strip */
+  .gk-hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .gk-stat-item {}
+  .gk-stat-num {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .gk-stat-label {
+    font-size: 0.72rem;
+    color: rgba(240,236,227,0.5);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  /* ────────────────────────────────────────────
+     SECTION HEADER
+  ──────────────────────────────────────────── */
+  .gk-section {
+    max-width: 1280px;
+    margin: 3.5rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .gk-section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    gap: 1rem;
+  }
+
+  .gk-section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .gk-section-label::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 28px;
+    background: linear-gradient(180deg, var(--accent), rgba(232,201,126,0.3));
+    border-radius: 2px;
+  }
+
+  .gk-section-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin: 0;
+  }
+  .gk-section-sub {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  .gk-see-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color 0.2s;
+    white-space: nowrap;
+  }
+  .gk-see-all:hover { border-bottom-color: var(--accent); color: var(--accent); }
+  .gk-see-all i { font-size: 0.7rem; transition: transform 0.2s; }
+  .gk-see-all:hover i { transform: translateX(3px); }
+
+  /* ────────────────────────────────────────────
+     PRODUCT GRID
+  ──────────────────────────────────────────── */
+  .gk-products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+
+  /* Product Card */
+  .gk-product-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    animation: fadeUp 0.5s ease both;
+  }
+  .gk-product-card:nth-child(1) { animation-delay: 0.05s; }
+  .gk-product-card:nth-child(2) { animation-delay: 0.1s; }
+  .gk-product-card:nth-child(3) { animation-delay: 0.15s; }
+  .gk-product-card:nth-child(4) { animation-delay: 0.2s; }
+  .gk-product-card:nth-child(5) { animation-delay: 0.25s; }
+  .gk-product-card:nth-child(6) { animation-delay: 0.3s; }
+  .gk-product-card:nth-child(7) { animation-delay: 0.35s; }
+  .gk-product-card:nth-child(8) { animation-delay: 0.4s; }
+
+  .gk-product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(232,201,126,0.15);
+    border-color: rgba(232,201,126,0.2);
+    background: var(--card-hover);
+  }
+
+  /* Wishlist button */
+  .gk-card-wishlist {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 3;
+    width: 34px;
+    height: 34px;
+    background: rgba(10,10,15,0.7);
+    border: 1px solid var(--card-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  .gk-product-card:hover .gk-card-wishlist {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .gk-card-wishlist:hover {
+    background: rgba(232,201,126,0.2);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* Badge */
+  .gk-card-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 3;
+    background: var(--accent);
+    color: #0a0a0f;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  /* Image area */
+  .gk-card-img-wrap {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #0e0e18;
+  }
+  .gk-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .gk-product-card:hover .gk-card-img-wrap img {
+    transform: scale(1.07);
+  }
+
+  /* Quick-add overlay */
+  .gk-quick-add {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(10,10,15,0.9));
+    padding: 2rem 1rem 0.85rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  .gk-product-card:hover .gk-quick-add {
+    transform: translateY(0);
+  }
+  .gk-quick-add-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .gk-quick-add-btn:hover { background: #f0d48a; }
+
+  /* Card info */
+  .gk-card-info {
+    padding: 1rem;
+  }
+
+  .gk-card-category {
+    font-size: 0.68rem;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .gk-card-name {
+    display: block;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    line-height: 1.4;
+    margin-bottom: 0.6rem;
+    /* clamp to 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s;
+  }
+  .gk-card-name:hover { color: var(--accent); }
+
+  .gk-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+
+  .gk-card-price {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .gk-card-price-old {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    font-weight: 400;
+    margin-left: 4px;
+  }
+
+  /* Stars */
+  .gk-card-stars {
+    display: flex;
+    gap: 2px;
+    color: var(--accent);
+    font-size: 0.65rem;
+  }
+
+  /* ────────────────────────────────────────────
+     PROMO BANNER STRIP
+  ──────────────────────────────────────────── */
+  .gk-promo-strip {
+    max-width: 1280px;
+    margin: 0 auto 3.5rem;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .gk-promo-card {
+    border-radius: 16px;
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    border: 1px solid var(--card-border);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    text-decoration: none;
+  }
+  .gk-promo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+    text-decoration: none;
+  }
+
+  .gk-promo-card.p1 { background: linear-gradient(135deg, #1a1a10 0%, #0f0f0a 100%); }
+  .gk-promo-card.p2 { background: linear-gradient(135deg, #0e101a 0%, #090b12 100%); }
+  .gk-promo-card.p3 { background: linear-gradient(135deg, #120a1a 0%, #0c0710 100%); }
+
+  .gk-promo-icon {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+  }
+  .p1 .gk-promo-icon { background: rgba(232,201,126,0.12); color: var(--accent); }
+  .p2 .gk-promo-icon { background: rgba(100,160,255,0.12); color: #64a0ff; }
+  .p3 .gk-promo-icon { background: rgba(180,100,255,0.12); color: #b464ff; }
+
+  .gk-promo-text {}
+  .gk-promo-text strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .gk-promo-text span {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  /* ── Responsive ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 1024px) {
+    .gk-products-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .gk-products-grid { grid-template-columns: repeat(2, 1fr); gap: 0.85rem; }
+    .gk-promo-strip { grid-template-columns: 1fr; }
+    .gk-hero-content { padding: 1.5rem; }
+    .gk-hero-inner { min-height: 300px; }
+    .gk-hero-stats { gap: 1.5rem; }
+    .gk-section-header { flex-direction: column; align-items: flex-start; }
+  }
+  @media (max-width: 480px) {
+    .gk-products-grid { grid-template-columns: repeat(2, 1fr); gap: 0.65rem; }
+    .gk-hero { padding: 0 1rem; margin: 1rem auto; }
+    .gk-section { padding: 0 1rem; }
+    .gk-promo-strip { padding: 0 1rem; }
+  }
+</style>
+
+
+<!-- ══════════════════════════════════════════
+     HERO BANNER
+══════════════════════════════════════════ -->
+<section class="gk-hero">
+  <div class="gk-hero-inner">
+    <img src="{% static 'images/banners/cover.jpg' %}" alt="GreatKart Sale" class="gk-hero-img">
+    <div class="gk-hero-overlay"></div>
+    <div class="gk-hero-orb"></div>
+
+    <div class="gk-hero-content">
+      <span class="gk-hero-eyebrow">New Season Drop</span>
+      <h1 class="gk-hero-title">
+        Style That <em>Defines</em><br>Your World
+      </h1>
+      <p class="gk-hero-sub">
+        Discover curated collections from top brands — fashion, tech, and lifestyle, all in one place.
+      </p>
+      <div class="gk-hero-actions">
+        <a href="{% url 'store' %}" class="gk-btn gk-btn-primary">
+          Shop Now <i class="fa-solid fa-arrow-right"></i>
+        </a>
+        <a href="#" class="gk-btn gk-btn-ghost">
+          View Deals
+        </a>
+      </div>
+
+      <div class="gk-hero-stats">
+        <div class="gk-stat-item">
+          <div class="gk-stat-num">50K+</div>
+          <div class="gk-stat-label">Products</div>
+        </div>
+        <div class="gk-stat-item">
+          <div class="gk-stat-num">1.2M</div>
+          <div class="gk-stat-label">Happy Buyers</div>
+        </div>
+        <div class="gk-stat-item">
+          <div class="gk-stat-num">4.9★</div>
+          <div class="gk-stat-label">Avg Rating</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     PROMO STRIP
+══════════════════════════════════════════ -->
+<div class="gk-promo-strip">
+  <a href="#" class="gk-promo-card p1">
+    <div class="gk-promo-icon"><i class="fa-solid fa-truck-fast"></i></div>
+    <div class="gk-promo-text">
+      <strong>Free Delivery</strong>
+      <span>On orders above ₹499. Fast & reliable shipping pan-India.</span>
+    </div>
+  </a>
+  <a href="#" class="gk-promo-card p2">
+    <div class="gk-promo-icon"><i class="fa-solid fa-rotate-left"></i></div>
+    <div class="gk-promo-text">
+      <strong>Easy Returns</strong>
+      <span>30-day hassle-free returns, no questions asked.</span>
+    </div>
+  </a>
+  <a href="#" class="gk-promo-card p3">
+    <div class="gk-promo-icon"><i class="fa-solid fa-shield-halved"></i></div>
+    <div class="gk-promo-text">
+      <strong>Secure Payments</strong>
+      <span>256-bit SSL encrypted. UPI, cards, wallets accepted.</span>
+    </div>
+  </a>
 </div>
 
-</div> <!-- container //  -->
+
+<!-- ══════════════════════════════════════════
+     POPULAR PRODUCTS
+══════════════════════════════════════════ -->
+<section class="gk-section">
+  <div class="gk-section-header">
+    <div class="gk-section-label">
+      <div>
+        <h2 class="gk-section-title">Popular Products</h2>
+        <p class="gk-section-sub">Handpicked favourites loved by thousands</p>
+      </div>
+    </div>
+    <a href="{% url 'store' %}" class="gk-see-all">
+      See all <i class="fa-solid fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <div class="gk-products-grid">
+    {% for product in products %}
+    <div class="gk-product-card">
+
+      <!-- Badge (show on first 2 cards as demo) -->
+      {% if forloop.counter <= 2 %}
+        <span class="gk-card-badge">{% if forloop.first %}Hot{% else %}New{% endif %}</span>
+      {% endif %}
+
+      <!-- Wishlist -->
+      <button class="gk-card-wishlist" title="Add to wishlist">
+        <i class="fa-regular fa-heart"></i>
+      </button>
+
+      <!-- Image -->
+      <a href="{{ product.get_url }}" class="gk-card-img-wrap">
+        <img src="{{ product.images.url }}" alt="{{ product.product_name }}">
+        <!-- Quick Add overlay -->
+        <div class="gk-quick-add">
+          <button class="gk-quick-add-btn">
+            <i class="fa-solid fa-bag-shopping"></i> Quick Add
+          </button>
+        </div>
+      </a>
+
+      <!-- Info -->
+      <div class="gk-card-info">
+        <div class="gk-card-category">{{ product.category }}</div>
+        <a href="{{ product.get_url }}" class="gk-card-name">{{ product.product_name }}</a>
+        <div class="gk-card-footer">
+          <div>
+            <span class="gk-card-price">${{ product.price }}</span>
+          </div>
+          <div class="gk-card-stars">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-regular fa-star"></i>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    {% empty %}
+    <!-- Empty state -->
+    <div style="grid-column: 1/-1; text-align:center; padding: 5rem 1rem;">
+      <i class="fa-solid fa-box-open" style="font-size:3rem; color:var(--text-muted); margin-bottom:1rem; display:block;"></i>
+      <p style="color:var(--text-muted); font-size:1rem;">No products found. Check back soon!</p>
+    </div>
+    {% endfor %}
+  </div>
 </section>
-<!-- ========================= SECTION MAIN END// ========================= -->
 
-<!-- ========================= SECTION  ========================= -->
-<section class="section-name padding-y-sm">
-<div class="container">
-
-<header class="section-heading">
-	<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
-	<h3 class="section-title">Popular products</h3>
-</header><!-- sect-heading -->
-
-	
-<div class="row">
-	{% for product in products%}
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{product.images.url}}"> </a>
-			<figcaption class="info-wrap">
-				<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
-				<div class="price mt-1">${{ product.price }}</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	{% endfor %}
-	</div>
-		
-	</div><!-- //container -->
-	</section>
-
-<!-- ========================= FOOTER END // ========================= -->
-
-</body>
-</html>
-
-{% endblock  %}
+{% endblock %}

@@ -1,114 +1,694 @@
+
+
 {% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
 
-<section class="section-content padding-y bg-light">
-<div class="container">
+<style>
+  /* ── Product Detail Page ── */
+  .gk-pdp {
+    max-width: 1280px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+  }
 
-<div class="card shadow-sm border-0">
-    <div class="row no-gutters">
-        <aside class="col-md-6 border-right">
-            <article class="gallery-wrap p-4 text-center"> 
-                <div class="img-big-wrap">
-                   <a href="#"><img src="{{ single_product.images.url }}" class="img-fluid rounded" style="max-height: 500px;"></a>
-                </div> 
-            </article> 
-        </aside>
+  /* Breadcrumb */
+  .gk-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .gk-breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .gk-breadcrumb a:hover { color: var(--accent); }
+  .gk-breadcrumb i { font-size: 0.6rem; }
+  .gk-breadcrumb span { color: var(--text-primary); }
 
-        <main class="col-md-6">
-            <form action="{% url 'add_cart' single_product.id %}" method="POST">
-                {% csrf_token %}
-                <article class="content-body p-5">
+  /* ── Main Layout ── */
+  .gk-pdp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
 
-                    <h2 class="title font-weight-bold text-dark">{{ single_product.product_name }}</h2>
-                    
-                    <div class="rating-wrap mb-3">
-                        <ul class="rating-stars list-unstyled d-inline-block">
-                            <li style="width:80%" class="stars-active"> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> <i class="fa fa-star text-warning"></i> </li>
-                            <li> <i class="fa fa-star text-muted"></i> <i class="fa fa-star text-muted"></i> <i class="fa fa-star text-muted"></i> <i class="fa fa-star text-muted"></i> <i class="fa fa-star text-muted"></i> </li>
-                        </ul>
-                        <span class="label-rating text-muted ml-2"> (12 reviews)</span>
-                    </div>
+  /* ── Gallery Side ── */
+  .gk-gallery {
+    position: sticky;
+    top: 88px;
+  }
 
-                    <div class="mb-4"> 
-                        <var class="price h3 text-primary font-weight-bold">${{ single_product.price }}</var> 
-                    </div> 
+  .gk-gallery-main {
+    position: relative;
+    background: #0e0e18;
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-                    <p class="text-secondary">{{ single_product.description }}</p>
-                    <hr>
+  .gk-gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .gk-gallery-main:hover img { transform: scale(1.05); }
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <h6 class="font-weight-bold">Choose Color</h6>
-                            <select name="color" class="form-control custom-select" required>
-                                <option value="" disabled selected>Select Color</option>
-                                {% for i in single_product.variation_set.all %}
-                                    {% if i.variation_category == 'color' %}
-                                        <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-6 mt-3 mt-md-0">
-                            <h6 class="font-weight-bold">Select Size</h6>
-                            <select name="size" class="form-control custom-select" required>
-                                <option value="" disabled selected>Select Size</option>
-                                {% for i in single_product.variation_set.all %}
-                                    {% if i.variation_category == 'size' %}
-                                        <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select> 
-                        </div>
-                    </div> 
+  /* Zoom hint */
+  .gk-zoom-hint {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    background: rgba(10,10,15,0.7);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+  }
 
-                    <hr>
+  /* Wishlist on image */
+  .gk-gallery-wishlist {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    background: rgba(10,10,15,0.7);
+    border: 1px solid var(--card-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+  }
+  .gk-gallery-wishlist:hover {
+    background: rgba(232,201,126,0.15);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
 
-                    {% if single_product.stock <= 0 %}
-                        <div class="alert alert-danger py-2 px-3">
-                            <i class="fa fa-exclamation-triangle"></i> Out of Stock
-                        </div>
-                    {% else %}
-                        <button type="submit" class="btn btn-primary btn-lg btn-block shadow"> 
-                            <span class="text">Add to Cart</span> <i class="fas fa-shopping-cart ml-2"></i>  
-                        </button>
-                    {% endif %}
+  /* ── Product Info Side ── */
+  .gk-pdp-info {}
 
-                </article> 
-            </form>
-        </main> 
-    </div> 
-</div> 
-<br>
+  .gk-pdp-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+  .gk-pdp-category {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(232,201,126,0.1);
+    border: 1px solid rgba(232,201,126,0.2);
+    padding: 3px 10px;
+    border-radius: 50px;
+  }
+  .gk-pdp-stock-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 50px;
+  }
+  .gk-pdp-stock-badge.in-stock {
+    background: rgba(80,200,120,0.1);
+    border: 1px solid rgba(80,200,120,0.25);
+    color: #50c878;
+  }
+  .gk-pdp-stock-badge.out-stock {
+    background: rgba(255,80,80,0.1);
+    border: 1px solid rgba(255,80,80,0.25);
+    color: #ff5050;
+  }
 
-<div class="row">
-    <div class="col-md-9">
-        <header class="section-heading mb-4">
-            <h3 class="font-weight-bold">Customer Reviews</h3>  
-        </header>
+  .gk-pdp-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
 
-        <article class="box mb-3 bg-white p-4 shadow-sm rounded border">
-            <div class="icontext w-100">
-                <img src="{% static './images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle border">
-                <div class="text pl-3">
-                    <span class="date text-muted float-md-right small">24.04.2026</span>  
-                    <h6 class="mb-0 font-weight-bold">Mike John</h6>
-                    <div class="rating-stars small">
-                        <i class="fa fa-star text-warning"></i><i class="fa fa-star text-warning"></i><i class="fa fa-star text-warning"></i><i class="fa fa-star text-warning"></i>
-                    </div>
-                </div>
-            </div> 
-            <div class="mt-3">
-                <p class="text-secondary">
-                    The quality of the material is amazing. Perfect fit and very comfortable for daily wear. Highly recommended!
-                </p>     
+  /* Rating Row */
+  .gk-pdp-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .gk-stars {
+    display: flex;
+    gap: 3px;
+    color: var(--accent);
+    font-size: 0.85rem;
+  }
+  .gk-stars .empty { color: #2e2e3e; }
+  .gk-rating-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .gk-rating-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--card-border);
+  }
+
+  /* Price */
+  .gk-pdp-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(232,201,126,0.05) 0%, transparent 100%);
+    border: 1px solid rgba(232,201,126,0.1);
+    border-radius: 14px;
+  }
+  .gk-pdp-price {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .gk-pdp-price-old {
+    font-size: 1rem;
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+  .gk-pdp-discount {
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: rgba(80,200,120,0.15);
+    color: #50c878;
+    border: 1px solid rgba(80,200,120,0.2);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  /* Description */
+  .gk-pdp-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Divider */
+  .gk-divider {
+    height: 1px;
+    background: var(--card-border);
+    margin: 1.5rem 0;
+  }
+
+  /* Variants */
+  .gk-variant-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gk-variant-label span {
+    color: var(--text-primary);
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.85rem;
+  }
+
+  .gk-select {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a7888' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  .gk-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(232,201,126,0.12);
+  }
+  .gk-select option { background: #1a1a24; }
+
+  /* Variants row */
+  .gk-variants-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .gk-variants-row .mb-0 { margin-bottom: 0; }
+
+  /* Out of stock notice */
+  .gk-out-of-stock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,80,80,0.08);
+    border: 1px solid rgba(255,80,80,0.2);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    color: #ff5050;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+  }
+
+  /* CTA Buttons */
+  .gk-pdp-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .gk-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0.9rem 1.5rem;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.25s ease;
+    letter-spacing: 0.02em;
+  }
+  .gk-cta-primary {
+    background: var(--accent);
+    color: #0a0a0f;
+    box-shadow: 0 4px 20px rgba(232,201,126,0.25);
+  }
+  .gk-cta-primary:hover {
+    background: #f0d48a;
+    box-shadow: 0 6px 30px rgba(232,201,126,0.4);
+    transform: translateY(-2px);
+  }
+  .gk-cta-outline {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--card-border);
+  }
+  .gk-cta-outline:hover {
+    background: var(--surface-2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Trust badges */
+  .gk-trust-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .gk-trust-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.8rem 0.5rem;
+    text-align: center;
+  }
+  .gk-trust-item i {
+    color: var(--accent);
+    font-size: 1rem;
+  }
+  .gk-trust-item span {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  /* ────────────────────────────────────────────
+     REVIEWS SECTION
+  ──────────────────────────────────────────── */
+  .gk-reviews {
+    max-width: 1280px;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .gk-reviews-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  .gk-reviews-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .gk-reviews-title::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(180deg, var(--accent), rgba(232,201,126,0.3));
+    border-radius: 2px;
+  }
+
+  .gk-reviews-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(232,201,126,0.08);
+    border: 1px solid rgba(232,201,126,0.15);
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+  }
+  .gk-reviews-summary strong {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--accent);
+  }
+  .gk-reviews-summary span { font-size: 0.78rem; color: var(--text-muted); }
+
+  .gk-reviews-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 780px;
+  }
+
+  .gk-review-card {
+    background: #13131c;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .gk-review-card:hover { border-color: rgba(232,201,126,0.15); }
+
+  .gk-review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .gk-reviewer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .gk-reviewer-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--card-border);
+  }
+  .gk-reviewer-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .gk-review-date {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  .gk-review-stars {
+    display: flex;
+    gap: 2px;
+    color: var(--accent);
+    font-size: 0.75rem;
+  }
+
+  .gk-review-body {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 1.75;
+  }
+
+  /* Responsive */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 900px) {
+    .gk-pdp-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .gk-gallery { position: static; }
+    .gk-gallery-main { max-height: 420px; }
+  }
+  @media (max-width: 600px) {
+    .gk-pdp { padding: 0 1rem; margin: 1.5rem auto; }
+    .gk-reviews { padding: 0 1rem; }
+    .gk-trust-row { grid-template-columns: repeat(3, 1fr); }
+    .gk-variants-row { grid-template-columns: 1fr; }
+    .gk-pdp-price { font-size: 1.8rem; }
+    .gk-reviews-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  }
+</style>
+
+<!-- ══════════════════════════════════════════
+     PRODUCT DETAIL PAGE
+══════════════════════════════════════════ -->
+<div class="gk-pdp">
+
+  <!-- Breadcrumb -->
+  <nav class="gk-breadcrumb">
+    <a href="/">Home</a>
+    <i class="fa-solid fa-chevron-right"></i>
+    <a href="{% url 'store' %}">Store</a>
+    <i class="fa-solid fa-chevron-right"></i>
+    <span>{{ single_product.product_name }}</span>
+  </nav>
+
+  <!-- Main Grid -->
+  <div class="gk-pdp-grid">
+
+    <!-- ── Gallery ── -->
+    <div class="gk-gallery">
+      <div class="gk-gallery-main">
+        <img src="{{ single_product.images.url }}" alt="{{ single_product.product_name }}">
+        <button class="gk-gallery-wishlist" title="Save to wishlist">
+          <i class="fa-regular fa-heart"></i>
+        </button>
+        <div class="gk-zoom-hint">
+          <i class="fa-solid fa-magnifying-glass-plus"></i> Hover to zoom
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Info ── -->
+    <div class="gk-pdp-info">
+      <!-- Meta tags -->
+      <div class="gk-pdp-meta">
+        <span class="gk-pdp-category">{{ single_product.category }}</span>
+        {% if single_product.stock > 0 %}
+          <span class="gk-pdp-stock-badge in-stock">
+            <i class="fa-solid fa-circle-check" style="font-size:0.65rem;"></i> In Stock
+          </span>
+        {% else %}
+          <span class="gk-pdp-stock-badge out-stock">
+            <i class="fa-solid fa-circle-xmark" style="font-size:0.65rem;"></i> Out of Stock
+          </span>
+        {% endif %}
+      </div>
+
+      <!-- Title -->
+      <h1 class="gk-pdp-title">{{ single_product.product_name }}</h1>
+
+      <!-- Rating -->
+      <div class="gk-pdp-rating">
+        <div class="gk-stars">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-regular fa-star empty"></i>
+        </div>
+        <span class="gk-rating-text">4.0</span>
+        <div class="gk-rating-divider"></div>
+        <span class="gk-rating-text">12 reviews</span>
+        <div class="gk-rating-divider"></div>
+        <span class="gk-rating-text">240+ sold</span>
+      </div>
+
+      <!-- Price -->
+      <div class="gk-pdp-price-row">
+        <span class="gk-pdp-price">${{ single_product.price }}</span>
+        <span class="gk-pdp-price-old">$89.99</span>
+        <span class="gk-pdp-discount">20% off</span>
+      </div>
+
+      <!-- Description -->
+      <p class="gk-pdp-desc">{{ single_product.description }}</p>
+
+      <div class="gk-divider"></div>
+
+      <!-- Variants + Add to Cart Form -->
+      <form action="{% url 'add_cart' single_product.id %}" method="POST">
+        {% csrf_token %}
+
+        <!-- Color & Size -->
+        <div class="gk-variants-row">
+          <div>
+            <div class="gk-variant-label">Color</div>
+            <select name="color" class="gk-select" required>
+              <option value="" disabled selected>Select Color</option>
+              {% for i in single_product.variation_set.all %}
+                {% if i.variation_category == 'color' %}
+                  <option value="{{ i.variation_value|lower }}">{{ i.variation_value|capfirst }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <div class="gk-variant-label">Size</div>
+            <select name="size" class="gk-select" required>
+              <option value="" disabled selected>Select Size</option>
+              {% for i in single_product.variation_set.all %}
+                {% if i.variation_category == 'size' %}
+                  <option value="{{ i.variation_value|lower }}">{{ i.variation_value|capfirst }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="gk-divider"></div>
+
+        <!-- CTA -->
+        <div class="gk-pdp-actions">
+          {% if single_product.stock <= 0 %}
+            <div class="gk-out-of-stock">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              This product is currently out of stock. Check back soon!
             </div>
-        </article>
-    </div> 
-</div> 
+          {% else %}
+            <button type="submit" class="gk-cta gk-cta-primary">
+              <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+            </button>
+            <button type="button" class="gk-cta gk-cta-outline">
+              <i class="fa-regular fa-heart"></i> Save to Wishlist
+            </button>
+          {% endif %}
+        </div>
+      </form>
 
-</div> 
+      <!-- Trust badges -->
+      <div class="gk-trust-row">
+        <div class="gk-trust-item">
+          <i class="fa-solid fa-truck-fast"></i>
+          <span>Free Delivery</span>
+        </div>
+        <div class="gk-trust-item">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>30-Day Returns</span>
+        </div>
+        <div class="gk-trust-item">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Secure Pay</span>
+        </div>
+      </div>
+
+    </div><!-- /info -->
+  </div><!-- /grid -->
+</div><!-- /pdp -->
+
+
+<!-- ══════════════════════════════════════════
+     REVIEWS
+══════════════════════════════════════════ -->
+<section class="gk-reviews">
+  <div class="gk-reviews-header">
+    <h2 class="gk-reviews-title">Customer Reviews</h2>
+    <div class="gk-reviews-summary">
+      <div class="gk-stars" style="font-size:0.8rem;">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+      </div>
+      <strong>4.0</strong>
+      <span>/ 5 &nbsp;·&nbsp; 12 reviews</span>
+    </div>
+  </div>
+
+  <div class="gk-reviews-grid">
+
+    <!-- Review Card -->
+    <div class="gk-review-card">
+      <div class="gk-review-header">
+        <div class="gk-reviewer">
+          <img src="{% static 'images/avatars/avatar1.jpg' %}" alt="Mike John" class="gk-reviewer-avatar">
+          <div>
+            <div class="gk-reviewer-name">Mike John</div>
+            <div class="gk-review-date">24 April 2026</div>
+          </div>
+        </div>
+        <div class="gk-review-stars">
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          <i class="fa-regular fa-star"></i>
+        </div>
+      </div>
+      <p class="gk-review-body">
+        The quality of the material is amazing. Perfect fit and very comfortable for daily wear. Highly recommended!
+      </p>
+    </div>
+
+    <!-- More reviews from DB can loop here -->
+
+  </div>
 </section>
 
 {% endblock %}
