@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  .success-wrapper{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 15px;
+    background:#0f1117;
+  }
+
+  .success-card{
+    width:100%;
+    max-width:650px;
+    background:#161b22;
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:24px;
+    padding:45px 35px;
+    text-align:center;
+    box-shadow:0 10px 40px rgba(0,0,0,0.35);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .success-card::before{
+    content:'';
+    position:absolute;
+    top:-120px;
+    right:-120px;
+    width:250px;
+    height:250px;
+    background:rgba(46, 204, 113, 0.08);
+    border-radius:50%;
+  }
+
+  .success-check{
+    width:95px;
+    height:95px;
+    margin:auto;
+    border-radius:50%;
+    background:rgba(46, 204, 113, 0.12);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:25px;
+    border:2px solid rgba(46, 204, 113, 0.25);
+  }
+
+  .success-check i{
+    font-size:42px;
+    color:#2ecc71;
+  }
+
+  .success-title{
+    font-size:2rem;
+    font-weight:700;
+    color:#fff;
+    margin-bottom:10px;
+  }
+
+  .success-text{
+    color:#b0b3b8;
+    font-size:15px;
+    line-height:1.7;
+    margin-bottom:35px;
+  }
+
+  .order-box{
+    background:#0d1117;
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:30px;
+  }
+
+  .order-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+
+  .order-row:last-child{
+    border-bottom:none;
+  }
+
+  .order-label{
+    color:#8b949e;
+    font-size:14px;
+  }
+
+  .order-value{
+    color:#fff;
+    font-weight:600;
+    font-size:14px;
+  }
+
+  .success-buttons{
+    display:flex;
+    gap:15px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  .success-btn{
+    padding:13px 24px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:600;
+    text-decoration:none;
+    transition:0.3s;
+  }
+
+  .btn-primary-custom{
+    background:#2ecc71;
+    color:#fff;
+  }
+
+  .btn-primary-custom:hover{
+    background:#29b765;
+    color:#fff;
+    transform:translateY(-2px);
+  }
+
+  .btn-dark-custom{
+    background:#21262d;
+    color:#fff;
+    border:1px solid rgba(255,255,255,0.08);
+  }
+
+  .btn-dark-custom:hover{
+    background:#30363d;
+    color:#fff;
+    transform:translateY(-2px);
+  }
+
+  @media(max-width:576px){
+
+    .success-card{
+      padding:35px 20px;
+    }
+
+    .success-title{
+      font-size:1.6rem;
+    }
+
+    .order-row{
+      flex-direction:column;
+      align-items:flex-start;
+      gap:4px;
+    }
+
+    .success-buttons{
+      flex-direction:column;
+    }
+
+    .success-btn{
+      width:100%;
+    }
+  }
+</style>
+
+<section class="success-wrapper">
+
+  <div class="success-card">
+
+    <!-- Success Icon -->
+    <div class="success-check">
+      <i class="fa-solid fa-check"></i>
+    </div>
+
+    <!-- Title -->
+    <h1 class="success-title">
+      Your Order Has Been Placed Successfully 🎉
+    </h1>
+
+    <!-- Text -->
+    <p class="success-text">
+      Thank you for shopping with us. Your order is confirmed and will be processed soon.
+      A confirmation email has been sent to your registered email address.
+    </p>
+
+    <!-- Order Details -->
+    <div class="order-box">
+
+      {% comment %} <div class="order-row">
+        <span class="order-label">Order Number</span>
+        <span class="order-value">#ORD{{ order.order_number }}</span>
+      </div>
+
+      <div class="order-row">
+        <span class="order-label">Payment Method</span>
+        <span class="order-value">{{ payment.payment_method }}</span>
+      </div>
+
+      <div class="order-row">
+        <span class="order-label">Order Date</span>
+        <span class="order-value">{{ order.created_at }}</span>
+      </div>
+
+      <div class="order-row">
+        <span class="order-label">Total Amount</span>
+        <span class="order-value">₹ {{ order.order_total }}</span>
+      </div>
+
+      <div class="order-row">
+        <span class="order-label">Delivery Status</span>
+        <span class="order-value" style="color:#2ecc71;">
+          Processing
+        </span>
+      </div>
+
+    </div> {% endcomment %}
+
+    <!-- Buttons -->
+    <div class="success-buttons">
+
+      <a href="{% url 'store' %}" class="success-btn btn-primary-custom">
+        Continue Shopping
+      </a>
+
+      {% comment %} <a href="{% url 'dashboard' %}" class="success-btn btn-dark-custom">
+        Go To Dashboard
+      </a> {% endcomment %}
+
+    </div>
+
+  </div>
+
+</section>
+
+{% endblock %}

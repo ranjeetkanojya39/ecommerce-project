@@ -58,4 +58,7 @@ def search(request):
 
 def place_order(request):
     if request.method == 'POST':
-        return HttpResponse("Order placed successfully")
+        return render(request, 'store/place_order.html')
+    else:
+        return HttpResponse("Invalid request method.")
+        

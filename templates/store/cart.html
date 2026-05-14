@@ -671,13 +671,13 @@
         </dl>
 
         <!-- Payment icons -->
-        <div class="gk-payments-strip">
+        {% comment %} <div class="gk-payments-strip">
           <span class="gk-pay-icon">VISA</span>
           <span class="gk-pay-icon">MC</span>
           <span class="gk-pay-icon">UPI</span>
           <span class="gk-pay-icon">PayPal</span>
           <span class="gk-pay-icon">GPay</span>
-        </div>
+        </div> {% endcomment %}
 
         <a href="{% url 'checkout' %}" class="gk-checkout-btn">
           <i class="fa-solid fa-lock"></i> Secure Checkout
