@@ -2,208 +2,675 @@
 {% load static %}
 
 {% block content %}
+
 <style>
-    /* Premium Black & Gold Theme Styles */
-    :root {
-        --gold-primary: #d4af37;
-        --gold-secondary: #f9e29c;
-        --dark-bg: #121212;
-        --card-bg: #1e1e1e;
-        --text-light: #e0e0e0;
-    }
+  /* ── Checkout Page ── */
+  .gk-checkout-page {
+    max-width: 1280px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+  }
 
-    .section-content { 
-        background-color: var(--dark-bg); 
-        min-height: 90vh; 
-        padding-top: 50px;
-        padding-bottom: 50px;
-        color: var(--text-light);
-    }
+  /* Page heading */
+  .gk-checkout-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .gk-checkout-heading::before {
+    content: '';
+    width: 4px; height: 28px;
+    background: linear-gradient(180deg, var(--accent), rgba(232,201,126,0.3));
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .gk-checkout-heading h1 {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
 
-    .card { 
-        border: 1px solid rgba(212, 175, 55, 0.3); 
-        border-radius: 15px; 
-        background-color: var(--card-bg); 
-        box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
-        margin-bottom: 25px;
-    }
+  /* Progress steps */
+  .gk-checkout-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+    max-width: 480px;
+  }
+  .gk-co-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .gk-co-step.done { color: #50c878; }
+  .gk-co-step.active { color: var(--accent); }
+  .gk-co-step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .gk-co-step.done .gk-co-step-num {
+    background: rgba(80,200,120,0.12);
+    border-color: #50c878;
+    color: #50c878;
+  }
+  .gk-co-step.active .gk-co-step-num {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0a0a0f;
+    box-shadow: 0 0 0 4px rgba(232,201,126,0.15);
+  }
+  .gk-co-step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--card-border);
+    margin: 0 0.5rem;
+    max-width: 60px;
+  }
 
-    .card-title { 
-        font-weight: 700; 
-        color: var(--gold-primary); 
-        border-bottom: 1px solid #333; 
-        padding-bottom: 15px; 
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
+  /* ── Main layout ── */
+  .gk-checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 1.5rem;
+    align-items: start;
+  }
 
-    /* Form Styling */
-    .form-label { color: var(--gold-primary); font-size: 0.9rem; font-weight: 500; }
-    .form-control { 
-        background-color: #2a2a2a; 
-        border: 1px solid #444; 
-        color: #fff; 
-        border-radius: 10px;
-        padding: 12px;
-    }
-    .form-control:focus { 
-        background-color: #333;
-        border-color: var(--gold-primary); 
-        box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.15); 
-        color: #fff;
-    }
+  /* ── Shared card style ── */
+  .gk-co-card {
+    background: #13131c;
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .gk-co-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.02);
+  }
+  .gk-co-card-header i {
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+  .gk-co-card-header h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .gk-co-card-body { padding: 1.5rem; }
 
-    /* Order Summary Item Styling */
-    .itemside { 
-        border-bottom: 1px solid #333; 
-        padding: 15px 0;
-        transition: 0.3s;
-    }
-    .itemside:hover { background-color: rgba(255, 255, 255, 0.02); }
-    .product-img { 
-        border-radius: 10px; 
-        border: 1px solid #444;
-        object-fit: cover;
-    }
-    .price { color: var(--gold-primary); font-weight: 700; font-size: 1.1rem; }
-    .text-gold { color: var(--gold-primary) !important; }
+  /* ── Form ── */
+  .gk-co-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .gk-co-field { }
+  .gk-co-field.full { grid-column: 1 / -1; }
+  .gk-co-field.thirds {
+    grid-column: span 1;
+  }
 
-    /* Button Customization */
-    .btn-gold { 
-        background: linear-gradient(45deg, #d4af37, #f9e29c); 
-        border: none;
-        color: #000; 
-        font-weight: 700;
-        padding: 14px;
-        border-radius: 10px;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-    }
-    .btn-gold:hover { 
-        background: linear-gradient(45deg, #f9e29c, #d4af37);
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
-        color: #000;
-    }
-    .btn-outline-gold {
-        border: 2px solid var(--gold-primary);
-        color: var(--gold-primary);
-        font-weight: 600;
-        border-radius: 10px;
-        padding: 12px;
-    }
-    .btn-outline-gold:hover {
-        background-color: var(--gold-primary);
-        color: #000;
-    }
+  .gk-co-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.45rem;
+  }
+  .gk-co-label .req { color: #ff5050; margin-left: 2px; }
 
-    /* Badge for Variations */
-    .badge-variation {
-        background-color: #333;
-        color: var(--gold-secondary);
-        border: 1px solid var(--gold-primary);
-        font-size: 0.75rem;
-        margin-right: 5px;
-    }
+  .gk-co-input-wrap { position: relative; }
+  .gk-co-input-icon {
+    position: absolute;
+    left: 1rem; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+  .gk-co-input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.7rem 1rem 0.7rem 2.5rem;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .gk-co-input::placeholder { color: var(--text-muted); }
+  .gk-co-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(232,201,126,0.1);
+  }
+  .gk-co-input-wrap:focus-within .gk-co-input-icon { color: var(--accent); }
+  textarea.gk-co-input {
+    padding-top: 0.75rem;
+    resize: none;
+    min-height: 80px;
+  }
+  textarea.gk-co-input ~ .gk-co-input-icon { top: 1rem; transform: none; }
+
+  /* Address section divider */
+  .gk-co-section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 1.25rem 0 1rem;
+    grid-column: 1 / -1;
+  }
+  .gk-co-section-label::before,
+  .gk-co-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--card-border);
+  }
+
+  /* ── Order Summary ── */
+  .gk-order-summary {
+    position: sticky;
+    top: 88px;
+  }
+
+  /* Item list */
+  .gk-order-items { }
+  .gk-order-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .gk-order-item:last-child { border-bottom: none; }
+  .gk-order-item-img {
+    width: 60px; height: 60px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #0e0e18;
+    border: 1px solid var(--card-border);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .gk-order-item-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .gk-order-item-qty {
+    position: absolute;
+    top: -6px; right: -6px;
+    background: var(--accent);
+    color: #0a0a0f;
+    font-size: 0.6rem;
+    font-weight: 800;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gk-order-item-info { flex: 1; min-width: 0; }
+  .gk-order-item-name {
+    display: block;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s;
+    margin-bottom: 4px;
+  }
+  .gk-order-item-name:hover { color: var(--accent); }
+  .gk-order-item-vars {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .gk-var-tag {
+    background: rgba(232,201,126,0.08);
+    border: 1px solid rgba(232,201,126,0.15);
+    color: var(--accent);
+    font-size: 0.62rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .gk-order-item-price {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Scrollable items */
+  .gk-order-items-scroll { max-height: 340px; overflow-y: auto; padding-right: 4px; }
+  .gk-order-items-scroll::-webkit-scrollbar { width: 4px; }
+  .gk-order-items-scroll::-webkit-scrollbar-track { background: transparent; }
+  .gk-order-items-scroll::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 2px; }
+
+  /* Totals */
+  .gk-order-totals { padding-top: 1rem; }
+  .gk-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.45rem 0;
+    font-size: 0.875rem;
+  }
+  .gk-total-row dt { color: var(--text-muted); font-weight: 400; }
+  .gk-total-row dd { color: var(--text-primary); font-weight: 600; margin: 0; }
+  .gk-total-row dd.free { color: #50c878; }
+  .gk-total-divider {
+    height: 1px;
+    background: var(--card-border);
+    margin: 0.75rem 0;
+  }
+  .gk-grand-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+  }
+  .gk-grand-total-row dt {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .gk-grand-total-row dd {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  /* Payment methods */
+  .gk-payment-methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    margin: 1.25rem 0;
+  }
+  .gk-payment-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .gk-payment-option:hover,
+  .gk-payment-option.selected {
+    background: rgba(232,201,126,0.08);
+    border-color: rgba(232,201,126,0.3);
+    color: var(--accent);
+  }
+  .gk-payment-option i { font-size: 1rem; color: var(--accent); }
+  .gk-payment-option input[type="radio"] { accent-color: var(--accent); }
+
+  /* Place order button */
+  .gk-place-order-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 12px;
+    padding: 1rem;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 24px rgba(232,201,126,0.25);
+    letter-spacing: 0.02em;
+  }
+  .gk-place-order-btn:hover {
+    background: #f0d48a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(232,201,126,0.4);
+  }
+  .gk-back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 0.75rem;
+    margin-top: 0.65rem;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .gk-back-btn:hover {
+    background: var(--surface-2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Secure badge */
+  .gk-secure-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--card-border);
+  }
+  .gk-secure-badge i { color: #50c878; }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .gk-checkout-grid { grid-template-columns: 1fr; }
+    .gk-order-summary { position: static; }
+    .gk-order-items-scroll { max-height: none; }
+  }
+  @media (max-width: 640px) {
+    .gk-checkout-page { padding: 0 1rem; margin: 1.5rem auto; }
+    .gk-co-form-grid { grid-template-columns: 1fr; }
+    .gk-co-field.full { grid-column: 1; }
+    .gk-payment-methods { grid-template-columns: 1fr; }
+    .gk-checkout-steps { display: none; }
+  }
 </style>
 
-<section class="section-content">
-<div class="container">
-    <div class="row">
-        <!-- Left Column: Billing Details -->
-        <aside class="col-lg-7">
-            <div class="card">
-                <div class="card-body p-4">
-                    <h4 class="card-title mb-4"><i class="fas fa-receipt me-2"></i>Billing Details</h4>
-                    <form action="{% url 'place_order' %}" method="POST">
-                        {% csrf_token %}
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">First Name</label>
-                                <input type="text" name="first_name" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" name="last_name" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" name="email" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Phone Number</label>
-                                <input type="text" name="phone" class="form-control" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Address Line 1</label>
-                                <input type="text" name="address_line_1" class="form-control" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Address Line 2 (Optional)</label>
-                                <input type="text" name="address_line_2" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">City</label>
-                                <input type="text" name="city" class="form-control" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">State</label>
-                                <input type="text" name="state" class="form-control" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Country</label>
-                                <input type="text" name="country" class="form-control" required>
-                            </div>
-                            <div class="col-12 mt-3">
-                                <label class="form-label">Order Note</label>
-                                <textarea name="order_note" rows="2" class="form-control" placeholder="Any special notes?"></textarea>
-                            </div>
-                        </div>
-                </div>
-            </div>
-        </aside>
 
-        <!-- Right Column: Order Summary -->
-        <aside class="col-lg-5">
-            <div class="card">
-                <div class="card-body p-4">
-                    <h4 class="card-title mb-4">Your Order</h4>
-                    
-                    <div class="order-items-scroll" style="max-height: 400px; overflow-y: auto;">
-                        {% for cart_item in cart_items %}
-                        <div class="itemside d-flex align-items-center">
-                            <div class="aside me-3">
-                                <img src="{{ cart_item.product.images.url }}" width="70" height="70" class="product-img">
-                            </div>
-                            <div class="info flex-grow-1">
-                                <a href="{{ cart_item.product.get_url }}" class="title text-light fw-bold text-decoration-none d-block mb-1">
-                                    {{ cart_item.product.product_name }}
-                                </a>
-                                <div class="mb-1">
-                                    {% if cart_item.variations.all %}
-                                        {% for item in cart_item.variations.all %}
-                                            <span class="badge badge-variation">{{ item.variation_value | capfirst }}</span>
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
-                                <small class="text-muted">Qty: {{cart_item.quantity}} × ₹{{ cart_item.product.price }}</small>
-                            </div>
-                            <div class="text-end">
-                                <span class="price">₹{{ cart_item.sub_total }}</span>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
+<div class="gk-checkout-page">
 
-                    <div class="mt-4 pt-3 border-top border-secondary">
-                        <button type="submit" name="submit" class="btn btn-gold w-100 mb-3">Place Order</button>
-                        <a href="{% url 'store' %}" class="btn btn-outline-gold w-100">Back to Store</a>
-                    </div>
-                    </form> <!-- Form Closure -->
-                </div>
-            </div>
-        </aside>
+  <!-- Heading -->
+  <div class="gk-checkout-heading">
+    <h1>Checkout</h1>
+  </div>
+
+  <!-- Progress steps -->
+  <div class="gk-checkout-steps">
+    <div class="gk-co-step done">
+      <span class="gk-co-step-num"><i class="fa-solid fa-check" style="font-size:0.55rem;"></i></span>
+      Cart
     </div>
-</div>
-</section>
+    <div class="gk-co-step-line"></div>
+    <div class="gk-co-step active">
+      <span class="gk-co-step-num">2</span>
+      Checkout
+    </div>
+    <div class="gk-co-step-line"></div>
+    <div class="gk-co-step">
+      <span class="gk-co-step-num">3</span>
+      Confirmation
+    </div>
+  </div>
+
+  <form action="{% url 'place_order' %}" method="POST">
+    {% csrf_token %}
+
+    <div class="gk-checkout-grid">
+
+      <!-- ── Billing Details ── -->
+      <div class="gk-co-card">
+        <div class="gk-co-card-header">
+          <i class="fa-solid fa-file-invoice"></i>
+          <h3>Billing Details</h3>
+        </div>
+        <div class="gk-co-card-body">
+          <div class="gk-co-form-grid">
+
+            <!-- Name -->
+            <div class="gk-co-field">
+              <label class="gk-co-label">First Name <span class="req">*</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-regular fa-user gk-co-input-icon"></i>
+                <input type="text" name="first_name" class="gk-co-input" placeholder="John" required>
+              </div>
+            </div>
+            <div class="gk-co-field">
+              <label class="gk-co-label">Last Name <span class="req">*</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-regular fa-user gk-co-input-icon"></i>
+                <input type="text" name="last_name" class="gk-co-input" placeholder="Doe" required>
+              </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="gk-co-field">
+              <label class="gk-co-label">Email Address <span class="req">*</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-regular fa-envelope gk-co-input-icon"></i>
+                <input type="email" name="email" class="gk-co-input" placeholder="you@example.com" required>
+              </div>
+            </div>
+            <div class="gk-co-field">
+              <label class="gk-co-label">Phone Number <span class="req">*</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-solid fa-phone gk-co-input-icon"></i>
+                <input type="text" name="phone" class="gk-co-input" placeholder="+91 98765 43210" required>
+              </div>
+            </div>
+
+            <!-- Address divider -->
+            <div class="gk-co-section-label">Shipping Address</div>
+
+            <!-- Address -->
+            <div class="gk-co-field full">
+              <label class="gk-co-label">Address Line 1 <span class="req">*</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-solid fa-location-dot gk-co-input-icon"></i>
+                <input type="text" name="address_line_1" class="gk-co-input" placeholder="Street, Building, Flat No." required>
+              </div>
+            </div>
+            <div class="gk-co-field full">
+              <label class="gk-co-label">Address Line 2 <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-solid fa-location-dot gk-co-input-icon"></i>
+                <input type="text" name="address_line_2" class="gk-co-input" placeholder="Landmark, Area…">
+              </div>
+            </div>
+
+            <!-- City / State / Country -->
+            <div class="gk-co-field">
+              <label class="gk-co-label">City <span class="req">*</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-solid fa-city gk-co-input-icon"></i>
+                <input type="text" name="city" class="gk-co-input" placeholder="Mumbai" required>
+              </div>
+            </div>
+            <div class="gk-co-field">
+              <label class="gk-co-label">State <span class="req">*</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-solid fa-map gk-co-input-icon"></i>
+                <input type="text" name="state" class="gk-co-input" placeholder="Maharashtra" required>
+              </div>
+            </div>
+            <div class="gk-co-field full">
+              <label class="gk-co-label">Country <span class="req">*</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-solid fa-earth-asia gk-co-input-icon"></i>
+                <input type="text" name="country" class="gk-co-input" placeholder="India" required>
+              </div>
+            </div>
+
+            <!-- Note divider -->
+            <div class="gk-co-section-label">Additional Info</div>
+
+            <!-- Order note -->
+            <div class="gk-co-field full">
+              <label class="gk-co-label">Order Note <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+              <div class="gk-co-input-wrap">
+                <i class="fa-regular fa-note-sticky gk-co-input-icon"></i>
+                <textarea name="order_note" rows="2" class="gk-co-input" placeholder="Any special instructions for delivery?"></textarea>
+              </div>
+            </div>
+
+          </div><!-- /form-grid -->
+        </div>
+      </div>
+
+      <!-- ── Order Summary ── -->
+      <aside class="gk-order-summary">
+        <div class="gk-co-card">
+          <div class="gk-co-card-header">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <h3>Your Order</h3>
+          </div>
+          <div class="gk-co-card-body">
+
+            <!-- Items -->
+            <div class="gk-order-items-scroll">
+              <div class="gk-order-items">
+                {% for cart_item in cart_items %}
+                <div class="gk-order-item">
+                  <div class="gk-order-item-img">
+                    <img src="{{ cart_item.product.images.url }}" alt="{{ cart_item.product.product_name }}">
+                    <span class="gk-order-item-qty">{{ cart_item.quantity }}</span>
+                  </div>
+                  <div class="gk-order-item-info">
+                    <a href="{{ cart_item.product.get_url }}" class="gk-order-item-name">
+                      {{ cart_item.product.product_name }}
+                    </a>
+                    <div class="gk-order-item-vars">
+                      {% for item in cart_item.variations.all %}
+                        <span class="gk-var-tag">{{ item.variation_value|capfirst }}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <span class="gk-order-item-price">₹{{ cart_item.sub_total }}</span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Totals -->
+            <div class="gk-order-totals">
+              <div class="gk-total-divider"></div>
+              <dl>
+                <div class="gk-total-row">
+                  <dt>Subtotal</dt>
+                  <dd>₹{{ total }}</dd>
+                </div>
+                <div class="gk-total-row">
+                  <dt>Tax (GST)</dt>
+                  <dd>₹{{ tax }}</dd>
+                </div>
+                <div class="gk-total-row">
+                  <dt>Delivery</dt>
+                  <dd class="free">Free</dd>
+                </div>
+              </dl>
+              <div class="gk-total-divider"></div>
+              <dl class="gk-grand-total-row">
+                <dt>Grand Total</dt>
+                <dd>₹{{ grand_total }}</dd>
+              </dl>
+            </div>
+
+            <!-- Payment method -->
+            {% comment %} <div style="margin-top:1rem;">
+              <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.75rem;">
+                Payment Method
+              </div>
+              <div class="gk-payment-methods">
+                <label class="gk-payment-option selected">
+                  <input type="radio" name="payment" value="paypal" checked style="display:none;">
+                  <i class="fa-brands fa-paypal"></i> PayPal
+                </label>
+                <label class="gk-payment-option">
+                  <input type="radio" name="payment" value="card" style="display:none;">
+                  <i class="fa-regular fa-credit-card"></i> Card
+                </label>
+                <label class="gk-payment-option">
+                  <input type="radio" name="payment" value="upi" style="display:none;">
+                  <i class="fa-solid fa-mobile-screen"></i> UPI
+                </label>
+                <label class="gk-payment-option">
+                  <input type="radio" name="payment" value="cod" style="display:none;">
+                  <i class="fa-solid fa-truck-fast"></i> COD
+                </label>
+              </div>
+            </div> {% endcomment %}
+
+            <!-- CTA -->
+            <button type="submit" name="submit" class="gk-place-order-btn">
+              <i class="fa-solid fa-lock"></i> Place Order
+            </button>
+            <a href="{% url 'store' %}" class="gk-back-btn">
+              <i class="fa-solid fa-arrow-left"></i> Back to Store
+            </a>
+
+            <div class="gk-secure-badge">
+              <i class="fa-solid fa-shield-halved"></i>
+              256-bit SSL encryption · Safe & Secure
+            </div>
+
+          </div>
+        </div>
+      </aside>
+
+    </div><!-- /checkout-grid -->
+  </form>
+
+</div><!-- /checkout-page -->
+
+<script>
+  // Payment method toggle
+  document.querySelectorAll('.gk-payment-option').forEach(opt => {
+    opt.addEventListener('click', function () {
+      document.querySelectorAll('.gk-payment-option').forEach(o => o.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+  });
+</script>
+
 {% endblock %}
