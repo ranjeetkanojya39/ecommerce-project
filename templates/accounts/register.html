@@ -1,64 +1,447 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 {% block content %}
 
-<section class="section-content padding-y">
+<style>
+  /* ── Register Page ── */
+  .gk-auth-page {
+    min-height: calc(100vh - 68px - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
 
-<!-- ============================ COMPONENT REGISTER   ================================= -->
-	<div class="card mx-auto" style="max-width:520px; margin-top:40px;">
-      <article class="card-body">
-    {% include 'includes/alert.html' %}
-		<header class="mb-4"><h4 class="card-title">Sign up</h4></header>
-		<form action="{% url 'register' %}" method="POST">
-      {% csrf_token %}
+  /* Background orbs */
+  .gk-auth-page::before {
+    content: '';
+    position: absolute;
+    top: -120px; left: 50%;
+    transform: translateX(-60%);
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(232,201,126,0.07) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .gk-auth-page::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; right: 10%;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(100,130,255,0.05) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* ── Auth Card ── */
+  .gk-auth-card {
+    max-width: 520px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  /* Brand mark at top */
+  .gk-auth-brand {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .gk-auth-logo {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .gk-auth-logo span { color: var(--accent); }
+  .gk-auth-logo-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-bottom: 2px;
+    margin-left: 1px;
+  }
+
+  /* Card body */
+  .gk-auth-box {
+    background: #13131c;
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 2.25rem;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  }
+
+  .gk-auth-header {
+    margin-bottom: 1.75rem;
+  }
+  .gk-auth-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .gk-auth-header p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  /* Alert wrapper */
+  .gk-alert-wrap { margin-bottom: 1.25rem; }
+
+  /* Two-column row */
+  .gk-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+  }
+
+  /* Form fields */
+  .gk-field {
+    margin-bottom: 1rem;
+  }
+  .gk-field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .gk-input-wrap {
+    position: relative;
+  }
+  .gk-input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+  .gk-input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+  .gk-input::placeholder { color: var(--text-muted); }
+  .gk-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(232,201,126,0.1);
+  }
+  .gk-input-wrap:focus-within .gk-input-icon {
+    color: var(--accent);
+  }
+
+  /* Django form widget override */
+  .gk-input-wrap input,
+  .gk-input-wrap select {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+  .gk-input-wrap input:focus,
+  .gk-input-wrap select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(232,201,126,0.1);
+  }
+  .gk-input-wrap input::placeholder {
+    color: var(--text-muted);
+  }
+
+  /* Password toggle */
+  .gk-pw-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.2s;
+    z-index: 2;
+  }
+  .gk-pw-toggle:hover { color: var(--accent); }
+
+  /* Error text */
+  .gk-field-error {
+    font-size: 0.78rem;
+    color: #ff6b6b;
+    margin-top: 0.35rem;
+    display: block;
+  }
+
+  /* Submit button */
+  .gk-submit-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 12px;
+    padding: 0.9rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(232,201,126,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 0.5rem;
+  }
+  .gk-submit-btn:hover {
+    background: #f0d48a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(232,201,126,0.35);
+  }
+  .gk-submit-btn:active { transform: translateY(0); }
+
+  /* Terms note */
+  .gk-terms-note {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.85rem;
+    line-height: 1.6;
+  }
+  .gk-terms-note a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .gk-terms-note a:hover { border-bottom-color: var(--accent); }
+
+  /* Sign in link */
+  .gk-auth-footer {
+    text-align: center;
+    margin-top: 1.75rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .gk-auth-footer a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 1px;
+    transition: border-color 0.2s;
+  }
+  .gk-auth-footer a:hover { border-bottom-color: var(--accent); }
+
+  /* Section divider label */
+  .gk-section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    opacity: 0.6;
+    margin: 1.25rem 0 0.75rem;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive: stack two-col on small screens */
+  @media (max-width: 480px) {
+    .gk-field-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 
 
-				<div class="form-row">
-					<div class="col form-group">
-						<label>First name</label>
-					  	{{ form.first_name }}
-					</div> <!-- form-group end.// -->
-					<div class="col form-group">
-						<label>Last name</label>
-					  	{{ form.last_name }}
-					</div> <!-- form-group end.// -->
-				</div> <!-- form-row end.// -->
+<section class="gk-auth-page">
+  <div class="gk-auth-card">
 
+    <!-- Logo -->
+    <div class="gk-auth-brand">
+      <a href="/" class="gk-auth-logo">
+        Great<span>Kart</span><span class="gk-auth-logo-dot"></span>
+      </a>
+    </div>
 
-				<div class="form-row">
-					<div class="form-group col-md-6">
-					  <label>Email Address</label>
-					  {{form.email}}
-					</div> <!-- form-group end.// -->
-					<div class="form-group col-md-6">
-					  <label>Phone Number</label>
-					  {{form.phone_number}}
-					</div> <!-- form-group end.// -->
-				</div> <!-- form-row.// -->
-				<div class="form-row">
-					<div class="form-group col-md-6">
-						<label>Create password</label>
-					    {{ form.password }}
-					</div> <!-- form-group end.// -->
-					<div class="form-group col-md-6">
-						<label>Repeat password</label>
-            {{form.confirm_password}}
-					</div> <!-- form-group end.// -->
-				</div>
-			    <div class="form-group">
-			        <button type="submit" class="btn btn-primary btn-block"> Register  </button>
-			    </div> <!-- form-group// -->
-      {{ form.email.errors }}
-      {{ form.non_field_errors }}
-			</form>
-		</article><!-- card-body.// -->
-    </div> <!-- card .// -->
-    <p class="text-center mt-4">Have an account? <a href="{% url 'login' %}">Log In</a></p>
-    <br><br>
-<!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+    <div class="gk-auth-box">
+      <div class="gk-auth-header">
+        <h2>Create account</h2>
+        <p>Join GreatKart and start shopping smarter</p>
+      </div>
 
+      <!-- Alerts -->
+      <div class="gk-alert-wrap">
+        {% include 'includes/alert.html' %}
+      </div>
 
+      <form action="{% url 'register' %}" method="POST" novalidate>
+        {% csrf_token %}
+
+        <!-- ── Personal Info ── -->
+        <p class="gk-section-label">Personal Info</p>
+
+        <div class="gk-field-row">
+          <!-- First Name -->
+          <div class="gk-field">
+            <label for="id_first_name">First Name</label>
+            <div class="gk-input-wrap">
+              {{ form.first_name }}
+              <i class="fa-regular fa-user gk-input-icon"></i>
+            </div>
+            {% if form.first_name.errors %}
+              <span class="gk-field-error">{{ form.first_name.errors|join:", " }}</span>
+            {% endif %}
+          </div>
+
+          <!-- Last Name -->
+          <div class="gk-field">
+            <label for="id_last_name">Last Name</label>
+            <div class="gk-input-wrap">
+              {{ form.last_name }}
+              <i class="fa-regular fa-user gk-input-icon"></i>
+            </div>
+            {% if form.last_name.errors %}
+              <span class="gk-field-error">{{ form.last_name.errors|join:", " }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- ── Contact Info ── -->
+        <p class="gk-section-label">Contact Info</p>
+
+        <div class="gk-field-row">
+          <!-- Email -->
+          <div class="gk-field">
+            <label for="id_email">Email Address</label>
+            <div class="gk-input-wrap">
+              {{ form.email }}
+              <i class="fa-regular fa-envelope gk-input-icon"></i>
+            </div>
+            {% if form.email.errors %}
+              <span class="gk-field-error">{{ form.email.errors|join:", " }}</span>
+            {% endif %}
+          </div>
+
+          <!-- Phone -->
+          <div class="gk-field">
+            <label for="id_phone_number">Phone Number</label>
+            <div class="gk-input-wrap">
+              {{ form.phone_number }}
+              <i class="fa-solid fa-phone gk-input-icon"></i>
+            </div>
+            {% if form.phone_number.errors %}
+              <span class="gk-field-error">{{ form.phone_number.errors|join:", " }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- ── Security ── -->
+        <p class="gk-section-label">Security</p>
+
+        <div class="gk-field-row">
+          <!-- Password -->
+          <div class="gk-field">
+            <label for="id_password">Create Password</label>
+            <div class="gk-input-wrap">
+              {{ form.password }}
+              <i class="fa-solid fa-lock gk-input-icon"></i>
+              <button type="button" class="gk-pw-toggle" onclick="togglePassword('id_password', 'pwIcon1')">
+                <i class="fa-regular fa-eye" id="pwIcon1"></i>
+              </button>
+            </div>
+            {% if form.password.errors %}
+              <span class="gk-field-error">{{ form.password.errors|join:", " }}</span>
+            {% endif %}
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="gk-field">
+            <label for="id_confirm_password">Repeat Password</label>
+            <div class="gk-input-wrap">
+              {{ form.confirm_password }}
+              <i class="fa-solid fa-lock gk-input-icon"></i>
+              <button type="button" class="gk-pw-toggle" onclick="togglePassword('id_confirm_password', 'pwIcon2')">
+                <i class="fa-regular fa-eye" id="pwIcon2"></i>
+              </button>
+            </div>
+            {% if form.confirm_password.errors %}
+              <span class="gk-field-error">{{ form.confirm_password.errors|join:", " }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+          <div class="gk-alert-wrap" style="margin-top:-0.25rem;">
+            <span class="gk-field-error">{{ form.non_field_errors|join:", " }}</span>
+          </div>
+        {% endif %}
+
+        <!-- Submit -->
+        <button type="submit" class="gk-submit-btn">
+          <i class="fa-solid fa-user-plus"></i> Create Account
+        </button>
+
+        <!-- Terms -->
+        <p class="gk-terms-note">
+          By registering you agree to our
+          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </p>
+
+      </form>
+    </div>
+
+    <!-- Sign in link -->
+    <div class="gk-auth-footer">
+      Already have an account? <a href="{% url 'login' %}">Sign In</a>
+    </div>
+
+  </div>
 </section>
+
+<script>
+  function togglePassword(fieldId, iconId) {
+    const input = document.getElementById(fieldId);
+    const icon  = document.getElementById(iconId);
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    icon.classList.toggle('fa-eye',       !isHidden);
+    icon.classList.toggle('fa-eye-slash',  isHidden);
+  }
+</script>
 
 {% endblock %}

@@ -1,95 +1,600 @@
 {% load static %}
 
-<div class="container-fluid py-2 text-center text-white"
-     style="background: linear-gradient(90deg, #3167EB, #7A7A7A); position: sticky; top: 0; z-index: 1030;">
-    <a href="{% url 'store' %}" class="text-white text-uppercase font-weight-bold small"
-       style="letter-spacing: 1px; text-decoration: none; display: block;">
-        🔥 50% Weekend Sale - Shop Now 🔥
+<style>
+  /* ══════════════════════════════════════
+     GK NAVBAR — Dark Theme
+  ══════════════════════════════════════ */
+
+  /* ── Announcement Bar ── */
+  .gk-topbar {
+    background: linear-gradient(90deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+    padding: 8px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    border-bottom: 1px solid rgba(232,201,126,0.15);
+    overflow: hidden;
+  }
+  .gk-topbar-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gk-topbar-text {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent, #e8c97e);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .gk-topbar-text:hover { color: #f0d48a; text-decoration: none; }
+  .gk-topbar-badge {
+    background: rgba(232,201,126,0.15);
+    border: 1px solid rgba(232,201,126,0.3);
+    color: var(--accent, #e8c97e);
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 50px;
+    letter-spacing: 0.08em;
+  }
+  /* Shimmer pulse on topbar */
+  .gk-topbar::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(232,201,126,0.04), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes shimmer {
+    0%   { left: -100%; }
+    100% { left: 200%; }
+  }
+
+  /* ── Main Header ── */
+  .gk-header {
+    background: #0d0d15;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: sticky;
+    top: 37px;
+    z-index: 1020;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  }
+  .gk-header .container {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 64px;
+  }
+
+  /* ── Logo ── */
+  .gk-logo {
+    font-family: var(--font-display, 'Georgia', serif);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #f0ece4;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gk-logo:hover { color: #f0ece4; text-decoration: none; }
+  .gk-logo img {
+    max-height: 36px;
+    width: auto;
+    border-radius: 6px;
+  }
+  .gk-logo-text span { color: var(--accent, #e8c97e); }
+  .gk-logo-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--accent, #e8c97e);
+    border-radius: 50%;
+    margin-bottom: 3px;
+    margin-left: 1px;
+  }
+
+  /* ── Search Bar ── */
+  .gk-search {
+    flex: 1;
+    max-width: 500px;
+  }
+  .gk-search form {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .gk-search form:focus-within {
+    border-color: rgba(232,201,126,0.4);
+    box-shadow: 0 0 0 3px rgba(232,201,126,0.07);
+  }
+  .gk-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0.6rem 1.1rem;
+    color: #f0ece4;
+    font-size: 0.875rem;
+    font-family: var(--font-body, sans-serif);
+  }
+  .gk-search-input::placeholder { color: rgba(255,255,255,0.3); }
+  .gk-search-btn {
+    background: var(--accent, #e8c97e);
+    border: none;
+    padding: 0.6rem 1.1rem;
+    color: #0a0a0f;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gk-search-btn:hover { background: #f0d48a; }
+
+  /* ── Nav Actions (right side) ── */
+  .gk-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* Nav links */
+  .gk-nav-link {
+    color: rgba(240,236,228,0.65);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+  .gk-nav-link:hover {
+    color: var(--accent, #e8c97e);
+    background: rgba(232,201,126,0.07);
+    text-decoration: none;
+  }
+
+  /* Dropdown */
+  .gk-dropdown {
+    position: relative;
+  }
+  .gk-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(240,236,228,0.65);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+  .gk-dropdown-toggle:hover,
+  .gk-dropdown-toggle.active {
+    color: var(--accent, #e8c97e);
+    background: rgba(232,201,126,0.07);
+  }
+  .gk-dropdown-toggle i.chevron {
+    font-size: 0.65rem;
+    transition: transform 0.2s;
+  }
+  .gk-dropdown-toggle.active i.chevron { transform: rotate(180deg); }
+
+  .gk-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 180px;
+    background: #181824;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 0.5rem;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 100;
+  }
+  .gk-dropdown-menu.open {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+  .gk-dropdown-item {
+    display: block;
+    padding: 0.5rem 0.9rem;
+    color: rgba(240,236,228,0.7);
+    font-size: 0.83rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .gk-dropdown-item:hover {
+    background: rgba(232,201,126,0.08);
+    color: var(--accent, #e8c97e);
+    text-decoration: none;
+  }
+  .gk-dropdown-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 0.4rem 0.5rem;
+  }
+  .gk-dropdown-item.danger { color: #ff6b6b; }
+  .gk-dropdown-item.danger:hover { background: rgba(255,107,107,0.08); color: #ff6b6b; }
+
+  /* Auth buttons */
+  .gk-auth-sep {
+    color: rgba(255,255,255,0.15);
+    font-size: 0.85rem;
+    padding: 0 2px;
+    user-select: none;
+  }
+  .gk-btn-register {
+    background: var(--accent, #e8c97e);
+    color: #0a0a0f !important;
+    border-radius: 8px;
+    padding: 0.4rem 0.9rem !important;
+    font-weight: 700 !important;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s !important;
+    box-shadow: 0 2px 12px rgba(232,201,126,0.2);
+  }
+  .gk-btn-register:hover {
+    background: #f0d48a !important;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 20px rgba(232,201,126,0.3) !important;
+    text-decoration: none;
+  }
+
+  /* Cart icon */
+  .gk-cart-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    color: rgba(240,236,228,0.65);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .gk-cart-btn:hover {
+    background: rgba(232,201,126,0.07);
+    color: var(--accent, #e8c97e);
+    text-decoration: none;
+  }
+  .gk-cart-btn i { font-size: 1.05rem; }
+  .gk-cart-badge {
+    position: absolute;
+    top: 3px; right: 3px;
+    width: 17px; height: 17px;
+    background: #e84040;
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 800;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #0d0d15;
+    line-height: 1;
+  }
+
+  /* Store nav link */
+  .gk-store-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* ── Mobile Toggle ── */
+  .gk-mobile-toggle {
+    display: none;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 6px 10px;
+    color: rgba(240,236,228,0.65);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .gk-mobile-toggle:hover {
+    color: var(--accent, #e8c97e);
+    border-color: rgba(232,201,126,0.3);
+  }
+
+  /* ── Mobile Nav ── */
+  .gk-mobile-nav {
+    display: none;
+    background: #0d0d15;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 1rem 1.25rem 1.5rem;
+    animation: slideDown 0.25s ease;
+  }
+  .gk-mobile-nav.open { display: block; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .gk-mobile-search {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .gk-mobile-search input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0.65rem 1rem;
+    color: #f0ece4;
+    font-size: 0.875rem;
+  }
+  .gk-mobile-search input::placeholder { color: rgba(255,255,255,0.3); }
+  .gk-mobile-search button {
+    background: var(--accent, #e8c97e);
+    border: none;
+    padding: 0.65rem 1rem;
+    color: #0a0a0f;
+    cursor: pointer;
+  }
+  .gk-mobile-links {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .gk-mobile-links a {
+    display: block;
+    padding: 0.6rem 0.75rem;
+    color: rgba(240,236,228,0.7);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .gk-mobile-links a:hover {
+    background: rgba(232,201,126,0.07);
+    color: var(--accent, #e8c97e);
+  }
+  .gk-mobile-links .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 0.4rem 0;
+  }
+  .gk-mobile-links .danger { color: #ff6b6b !important; }
+  .gk-mobile-links .register-mobile {
+    background: var(--accent, #e8c97e) !important;
+    color: #0a0a0f !important;
+    text-align: center;
+    margin-top: 0.5rem;
+    border-radius: 10px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 991px) {
+    .gk-search,
+    .gk-nav-actions .gk-nav-link,
+    .gk-nav-actions .gk-dropdown,
+    .gk-nav-actions .gk-auth-sep,
+    .gk-nav-actions .gk-btn-register {
+      display: none;
+    }
+    .gk-mobile-toggle { display: flex; align-items: center; }
+    .gk-header .container { gap: 0.75rem; }
+  }
+  @media (max-width: 576px) {
+    .gk-topbar-badge { display: none; }
+  }
+</style>
+
+<!-- ══════════════════════════
+     ANNOUNCEMENT BAR
+══════════════════════════ -->
+<div class="gk-topbar">
+  <div class="container gk-topbar-inner">
+    <a href="{% url 'store' %}" class="gk-topbar-text">
+      <span class="gk-topbar-badge">SALE</span>
+      🔥 Weekend Special — Up to 50% Off Select Items
+      <span class="gk-topbar-badge">Shop Now →</span>
     </a>
+  </div>
 </div>
 
-<header class="section-header border-bottom bg-white" 
-        style="position: sticky; top: 38px; z-index: 1020; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light px-0">
+<!-- ══════════════════════════
+     MAIN HEADER
+══════════════════════════ -->
+<header class="gk-header">
+  <div class="container">
 
-            <a class="navbar-brand mr-lg-5" href="{% url 'home' %}">
-                <img src="{% static 'images/logo.jpg' %}" 
-                     style="max-height: 45px; width: auto;" 
-                     alt="GreatKart" 
-                     loading="lazy">
-            </a>
+    <!-- Logo -->
+    <a href="{% url 'home' %}" class="gk-logo">
+      <img src="{% static 'images/logo.jpg' %}" alt="GreatKart">
+      <span class="gk-logo-text">Great<span>Kart</span><span class="gk-logo-dot"></span></span>
+    </a>
 
-            <div class="d-flex order-lg-3 ml-auto align-items-center">
-                <a href="{% url 'cart' %}" class="widget-header mr-2 position-relative text-dark p-2">
-                    <div class="icon icon-sm rounded-circle border d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                        <i class="fa fa-shopping-cart text-primary"></i>
-                    </div>
-                    {% if cart_count > 0 %}
-                    <span class="badge badge-pill badge-danger"
-                          style="position: absolute; top: 2px; right: 2px; font-size: 0.7rem;">
-                        {{ cart_count }}
-                    </span>
-                    {% endif %}
-                </a>
-
-                <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#main_nav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
-
-            <div class="collapse navbar-collapse order-lg-2" id="main_nav">
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle font-weight-bold" href="#" data-toggle="dropdown">
-                            All Categories
-                        </a>
-                        <div class="dropdown-menu shadow-sm border-0">
-                            <a class="dropdown-item" href="{% url 'store' %}">All Products</a>
-                            <div class="dropdown-divider"></div>
-                            {% for category in links %}
-                                <a class="dropdown-item" href="{{ category.get_url }}">{{ category.category_name }}</a>
-                            {% endfor %}
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'store' %}">Store</a>
-                    </li>
-                </ul>
-
-                <form action="{% url 'search' %}" method="GET" class="mx-lg-4 my-3 my-lg-0 flex-grow-1">
-                    <div class="input-group">
-                        <input type="text" class="form-control border-right-0" placeholder="Search products..." name="keyword" required style="border-radius: 20px 0 0 20px;">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary px-3" type="submit" style="border-radius: 0 20px 20px 0;">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-                <div class="navbar-nav">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle font-weight-bold text-capitalize" href="#" data-toggle="dropdown">
-                                <i class="fa fa-user-circle mr-1"></i> {{ user.first_name }}
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
-                                <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
-                                <a class="dropdown-item" href="{% url 'my_orders' %}">My Orders</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a>
-                            </div>
-                        </li>
-                    {% else %}
-                        <div class="nav-item d-flex align-items-center ml-lg-2">
-                            <a class="nav-link py-0 font-weight-bold" href="{% url 'login' %}">Sign In</a>
-                            <span class="text-muted small">|</span>
-                            <a class="nav-link py-0 font-weight-bold" href="{% url 'register' %}">Register</a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </nav>
+    <!-- Search (desktop) -->
+    <div class="gk-search">
+      <form action="{% url 'search' %}" method="GET">
+        <input
+          type="text"
+          class="gk-search-input"
+          placeholder="Search products…"
+          name="keyword"
+          required
+          autocomplete="off"
+        >
+        <button type="submit" class="gk-search-btn">
+          <i class="fa fa-search"></i>
+        </button>
+      </form>
     </div>
+
+    <!-- Nav Actions -->
+    <div class="gk-nav-actions">
+
+      <!-- Categories dropdown -->
+      <div class="gk-dropdown">
+        <button class="gk-dropdown-toggle" onclick="toggleDropdown('catMenu', this)">
+          <i class="fa fa-th-large" style="font-size:0.8rem;"></i>
+          Categories
+          <i class="fa fa-chevron-down chevron"></i>
+        </button>
+        <div class="gk-dropdown-menu" id="catMenu">
+          <a class="gk-dropdown-item" href="{% url 'store' %}">
+            <i class="fa fa-store" style="width:16px;margin-right:6px;"></i> All Products
+          </a>
+          <div class="gk-dropdown-divider"></div>
+          {% for category in links %}
+            <a class="gk-dropdown-item" href="{{ category.get_url }}">{{ category.category_name }}</a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Store -->
+      <a href="{% url 'store' %}" class="gk-nav-link gk-store-link">
+        Store
+      </a>
+
+      <!-- Cart -->
+      <a href="{% url 'cart' %}" class="gk-cart-btn">
+        <i class="fa fa-shopping-bag"></i>
+        {% if cart_count > 0 %}
+          <span class="gk-cart-badge">{{ cart_count }}</span>
+        {% endif %}
+      </a>
+
+      <!-- Auth -->
+      {% if user.is_authenticated %}
+        <div class="gk-dropdown">
+          <button class="gk-dropdown-toggle" onclick="toggleDropdown('userMenu', this)">
+            <i class="fa fa-user-circle"></i>
+            {{ user.first_name }}
+            <i class="fa fa-chevron-down chevron"></i>
+          </button>
+          <div class="gk-dropdown-menu" id="userMenu">
+            <a class="gk-dropdown-item" href="{% url 'dashboard' %}">
+              <i class="fa fa-tachometer-alt" style="width:16px;margin-right:6px;"></i> Dashboard
+            </a>
+            <a class="gk-dropdown-item" href="{% url 'my_orders' %}">
+              <i class="fa fa-box" style="width:16px;margin-right:6px;"></i> My Orders
+            </a>
+            <div class="gk-dropdown-divider"></div>
+            <a class="gk-dropdown-item danger" href="{% url 'logout' %}">
+              <i class="fa fa-sign-out-alt" style="width:16px;margin-right:6px;"></i> Logout
+            </a>
+          </div>
+        </div>
+      {% else %}
+        <a href="{% url 'login' %}" class="gk-nav-link">Sign In</a>
+        <span class="gk-auth-sep">|</span>
+        <a href="{% url 'register' %}" class="gk-nav-link gk-btn-register">Register</a>
+      {% endif %}
+
+    </div>
+
+    <!-- Mobile Toggle -->
+    <button class="gk-mobile-toggle" onclick="toggleMobileNav()" id="mobileToggle">
+      <i class="fa fa-bars" id="mobileToggleIcon"></i>
+    </button>
+
+  </div>
+
+  <!-- ── Mobile Nav ── -->
+  <div class="gk-mobile-nav" id="mobileNav">
+    <!-- Mobile search -->
+    <form action="{% url 'search' %}" method="GET" class="gk-mobile-search">
+      <input type="text" name="keyword" placeholder="Search products…" required autocomplete="off">
+      <button type="submit"><i class="fa fa-search"></i></button>
+    </form>
+
+    <ul class="gk-mobile-links">
+      <li><a href="{% url 'store' %}"><i class="fa fa-store" style="width:18px;"></i> Store</a></li>
+      <li><a href="{% url 'cart' %}"><i class="fa fa-shopping-bag" style="width:18px;"></i> Cart {% if cart_count > 0 %}<span style="background:#e84040;color:#fff;border-radius:50px;padding:1px 7px;font-size:0.7rem;margin-left:4px;">{{ cart_count }}</span>{% endif %}</a></li>
+      <li class="divider"></li>
+
+      {% if links %}
+        {% for category in links %}
+          <li><a href="{{ category.get_url }}">{{ category.category_name }}</a></li>
+        {% endfor %}
+        <li class="divider"></li>
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'dashboard' %}"><i class="fa fa-tachometer-alt" style="width:18px;"></i> Dashboard</a></li>
+        <li><a href="{% url 'my_orders' %}"><i class="fa fa-box" style="width:18px;"></i> My Orders</a></li>
+        <li><a href="{% url 'logout' %}" class="danger"><i class="fa fa-sign-out-alt" style="width:18px;"></i> Logout</a></li>
+      {% else %}
+        <li><a href="{% url 'login' %}"><i class="fa fa-sign-in-alt" style="width:18px;"></i> Sign In</a></li>
+        <li><a href="{% url 'register' %}" class="register-mobile">Create Free Account</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
 </header>
+
+<script>
+  /* ── Dropdown toggle ── */
+  function toggleDropdown(menuId, btn) {
+    const menu = document.getElementById(menuId);
+    const isOpen = menu.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.gk-dropdown-menu').forEach(m => m.classList.remove('open'));
+    document.querySelectorAll('.gk-dropdown-toggle').forEach(b => b.classList.remove('active'));
+    if (!isOpen) {
+      menu.classList.add('open');
+      btn.classList.add('active');
+    }
+  }
+  /* Close on outside click */
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.gk-dropdown')) {
+      document.querySelectorAll('.gk-dropdown-menu').forEach(m => m.classList.remove('open'));
+      document.querySelectorAll('.gk-dropdown-toggle').forEach(b => b.classList.remove('active'));
+    }
+  });
+
+  /* ── Mobile nav toggle ── */
+  function toggleMobileNav() {
+    const nav = document.getElementById('mobileNav');
+    const icon = document.getElementById('mobileToggleIcon');
+    const open = nav.classList.toggle('open');
+    icon.className = open ? 'fa fa-times' : 'fa fa-bars';
+  }
+</script>

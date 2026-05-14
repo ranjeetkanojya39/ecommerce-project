@@ -144,7 +144,6 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: "danger",
     
-    
 }
 
 # SMTP configuration
@@ -158,4 +157,4 @@ EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = 'ranjeetskanojiya20@gmail.com'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'   

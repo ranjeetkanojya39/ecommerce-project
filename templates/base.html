@@ -483,32 +483,67 @@
       <input type="text" placeholder="Search products, brands, categories…">
     </div>
 
-    <!-- Actions -->
-    <div class="gk-nav-actions">
-      <a href="/accounts/login/" class="gk-nav-btn">
-        <i class="fa-regular fa-user"></i> Login
-      </a>
-      <a href="/accounts/register/" class="gk-nav-btn primary">
-        Sign Up
-      </a>
-      <a href="/cart/" class="gk-nav-btn gk-cart-badge">
-        <i class="fa-solid fa-bag-shopping"></i>
-        <span class="badge">3</span>
-      </a>
-    </div>
+   <!-- ── Actions ── -->
+<div class="gk-nav-actions">
+
+  <!-- Cart -->
+  <a href="{% url 'cart' %}" class="gk-nav-btn gk-cart-badge">
+    <i class="fa-solid fa-bag-shopping"></i>
+
+    {% if cart_count > 0 %}
+      <span class="badge">{{ cart_count }}</span>
+    {% endif %}
+  </a>
+
+  <!-- Auth -->
+  {% if user.is_authenticated %}
+
+    <!-- Dashboard -->
+    <a href="{% url 'dashboard' %}" class="gk-nav-btn">
+      <i class="fa-solid fa-user"></i>
+
+      {% if user.first_name %}
+        Hi, {{ user.first_name }}
+      {% else %}
+        My Account
+      {% endif %}
+    </a>
+
+    <!-- Logout -->
+    <a href="{% url 'logout' %}" class="gk-nav-btn primary">
+      Logout
+    </a>
+
+  {% else %}
+
+    <!-- Login -->
+    <a href="{% url 'login' %}" class="gk-nav-btn">
+      <i class="fa-regular fa-user"></i>
+      Login
+    </a>
+
+    <!-- Register -->
+    <a href="{% url 'register' %}" class="gk-nav-btn primary">
+      Sign Up
+    </a>
+
+  {% endif %}
+
+</div>
   </nav>
 
   <!-- ── Category Strip ── -->
   <div class="gk-categories">
     <div class="gk-categories-inner">
-      <a href="#" class="gk-cat-link active"><i class="fa-solid fa-fire-flame-curved"></i> Trending</a>
-      <a href="#" class="gk-cat-link"><i class="fa-solid fa-shirt"></i> Fashion</a>
+     
+     <a href="{% url 'store' %}" class="gk-cat-link active"><i class="fa-solid fa-fire-flame-curved"></i> Store</a>
+       {% comment %} <a href="#" class="gk-cat-link"><i class="fa-solid fa-shirt"></i> Fashion</a>
       <a href="#" class="gk-cat-link"><i class="fa-solid fa-mobile-screen"></i> Electronics</a>
       <a href="#" class="gk-cat-link"><i class="fa-solid fa-house"></i> Home & Living</a>
       <a href="#" class="gk-cat-link"><i class="fa-solid fa-dumbbell"></i> Sports</a>
       <a href="#" class="gk-cat-link"><i class="fa-solid fa-jar"></i> Beauty</a>
       <a href="#" class="gk-cat-link"><i class="fa-solid fa-book"></i> Books</a>
-      <a href="#" class="gk-cat-link"><i class="fa-solid fa-gamepad"></i> Gaming</a>
+      <a href="#" class="gk-cat-link"><i class="fa-solid fa-gamepad"></i> Gaming</a> {% endcomment %}
     </div>
   </div>
 
@@ -543,7 +578,7 @@
         <ul class="gk-footer-links">
           <li><a href="/accounts/login/">Sign In</a></li>
           <li><a href="/accounts/register/">Register</a></li>
-          <li><a href="#">My Orders</a></li>
+          <li><a href="/cart/checkout/">My Orders</a></li>
           <li><a href="#">Wishlist</a></li>
         </ul>
       </div>
@@ -558,7 +593,7 @@
       </div>
     </div>
     <div class="gk-footer-bottom">
-      <p>© 2025 GreatKart. All rights reserved.</p>
+      <p>© 2026 GreatKart. All rights reserved.</p>
       <div class="gk-social-links">
         <a href="#" class="gk-social-link"><i class="fa-brands fa-instagram"></i></a>
         <a href="#" class="gk-social-link"><i class="fa-brands fa-x-twitter"></i></a>

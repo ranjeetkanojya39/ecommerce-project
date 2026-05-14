@@ -1,51 +1,480 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 {% block content %}
 
-<section class="section-conten padding-y" style="min-height:84vh">
+<style>
+  /* ── Login Page ── */
+  .gk-auth-page {
+    min-height: calc(100vh - 68px - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
 
-<!-- ============================ COMPONENT LOGIN   ================================= -->
+  /* Background orbs */
+  .gk-auth-page::before {
+    content: '';
+    position: absolute;
+    top: -120px; left: 50%;
+    transform: translateX(-60%);
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(232,201,126,0.07) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .gk-auth-page::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; right: 10%;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(100,130,255,0.05) 0%, transparent 65%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
 
-{% if request.GET.command == 'verification' %}
+  /* ── Verification Banner ── */
+  .gk-verify-banner {
+    max-width: 540px;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(80,180,255,0.08) 0%, rgba(80,180,255,0.04) 100%);
+    border: 1px solid rgba(80,180,255,0.2);
+    border-radius: 20px;
+    padding: 2.5rem;
+    text-align: center;
+    animation: fadeUp 0.5s ease both;
+    position: relative;
+    z-index: 1;
+  }
+  .gk-verify-icon {
+    width: 68px; height: 68px;
+    background: rgba(80,180,255,0.1);
+    border: 1px solid rgba(80,180,255,0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 1.6rem;
+    color: #64b4ff;
+    animation: floatIcon 3s ease-in-out infinite;
+  }
+  @keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .gk-verify-banner h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+  }
+  .gk-verify-banner p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    margin-bottom: 0.5rem;
+  }
+  .gk-verify-email {
+    display: inline-block;
+    background: rgba(232,201,126,0.1);
+    border: 1px solid rgba(232,201,126,0.2);
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin: 0.5rem 0 1.25rem;
+    word-break: break-all;
+  }
+  .gk-verify-login-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color 0.2s;
+  }
+  .gk-verify-login-link:hover {
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+  }
 
-<div class="container mx-auto alert alert-info text-center" role="alert" style="max-width: 1024px; margin-top:100px;">
-Thank you for registering with us. We have sent you a verification email to your email address [{{ request.GET.email }}]
-<br><br>
-Already verified? <a href="{% url 'login' %}">Login</a>
-</div>
+  /* ── Auth Card ── */
+  .gk-auth-card {
+    max-width: 420px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.5s ease both;
+  }
 
-{% else %}
+  /* Brand mark at top */
+  .gk-auth-brand {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .gk-auth-logo {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .gk-auth-logo span { color: var(--accent); }
+  .gk-auth-logo-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-bottom: 2px;
+    margin-left: 1px;
+  }
 
-	<div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
+  /* Card body */
+  .gk-auth-box {
+    background: #13131c;
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 2.25rem;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  }
 
-      <div class="card-body">
-      <h4 class="card-title mb-4">Sign in</h4>
-      {% include 'includes/alert.html' %}
+  .gk-auth-header {
+    margin-bottom: 1.75rem;
+  }
+  .gk-auth-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .gk-auth-header p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  /* Alert wrapper */
+  .gk-alert-wrap { margin-bottom: 1.25rem; }
+
+  /* Form fields */
+  .gk-field {
+    margin-bottom: 1rem;
+  }
+  .gk-field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .gk-input-wrap {
+    position: relative;
+  }
+  .gk-input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+  .gk-input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .gk-input::placeholder { color: var(--text-muted); }
+  .gk-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(232,201,126,0.1);
+  }
+  .gk-input:focus + .gk-input-icon,
+  .gk-input-wrap:focus-within .gk-input-icon {
+    color: var(--accent);
+  }
+
+  /* Password toggle */
+  .gk-pw-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.2s;
+  }
+  .gk-pw-toggle:hover { color: var(--accent); }
+
+  /* Forgot link */
+  .gk-field-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+    margin-top: -0.25rem;
+  }
+  .gk-forgot-link {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .gk-forgot-link:hover { color: var(--accent); }
+
+  /* Submit button */
+  .gk-submit-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 12px;
+    padding: 0.9rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(232,201,126,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .gk-submit-btn:hover {
+    background: #f0d48a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(232,201,126,0.35);
+  }
+  .gk-submit-btn:active { transform: translateY(0); }
+
+  /* Divider */
+  .gk-auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+  .gk-auth-divider::before,
+  .gk-auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--card-border);
+  }
+
+  /* Social login buttons */
+  .gk-social-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .gk-social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.65rem;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .gk-social-btn:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.12);
+    color: var(--text-primary);
+  }
+
+  /* Sign up link */
+  .gk-auth-footer {
+    text-align: center;
+    margin-top: 1.75rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .gk-auth-footer a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 1px;
+    transition: border-color 0.2s;
+  }
+  .gk-auth-footer a:hover { border-bottom-color: var(--accent); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+
+<section class="gk-auth-page">
+
+  {% if request.GET.command == 'verification' %}
+  <!-- ══════ VERIFICATION BANNER ══════ -->
+  <div class="gk-verify-banner">
+    <div class="gk-verify-icon">
+      <i class="fa-solid fa-envelope-circle-check"></i>
+    </div>
+    <h3>Check Your Email</h3>
+    <p>Thank you for registering! We've sent a verification link to:</p>
+    <span class="gk-verify-email">{{ request.GET.email }}</span>
+    <p style="font-size:0.8rem; margin-bottom:1.25rem;">
+      Didn't receive it? Check your spam folder or wait a few minutes.
+    </p>
+    <p style="color:var(--text-muted); font-size:0.82rem; margin-bottom:0;">
+      Already verified?&nbsp;
+      <a href="{% url 'login' %}" class="gk-verify-login-link">
+        Sign In <i class="fa-solid fa-arrow-right" style="font-size:0.7rem;"></i>
+      </a>
+    </p>
+  </div>
+
+  {% else %}
+  <!-- ══════ LOGIN CARD ══════ -->
+  <div class="gk-auth-card">
+
+    <!-- Logo -->
+    <div class="gk-auth-brand">
+      <a href="/" class="gk-auth-logo">
+        Great<span>Kart</span><span class="gk-auth-logo-dot"></span>
+      </a>
+    </div>
+
+    <div class="gk-auth-box">
+      <div class="gk-auth-header">
+        <h2>Welcome back</h2>
+        <p>Sign in to your account to continue</p>
+      </div>
+
+      <!-- Alerts -->
+      <div class="gk-alert-wrap">
+        {% include 'includes/alert.html' %}
+      </div>
+
       <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
-          <div class="form-group">
-			 <input type="email" class="form-control" placeholder="Email Address" name="email">
-          </div> <!-- form-group// -->
-          <div class="form-group">
-			<input type="password" class="form-control" placeholder="Password" name="password">
-          </div> <!-- form-group// -->
 
-          <div class="form-group">
-          	<a href="{% url 'forgotPassword' %}" class="float-right">Forgot password?</a>
+        <!-- Email -->
+        <div class="gk-field">
+          <label for="email">Email Address</label>
+          <div class="gk-input-wrap">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="gk-input"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            >
+            <i class="fa-regular fa-envelope gk-input-icon"></i>
+          </div>
+        </div>
 
-          </div> <!-- form-group form-check .// -->
-          <div class="form-group">
-              <button type="submit" class="btn btn-primary btn-block"> Login  </button>
-          </div> <!-- form-group// -->
+        <!-- Password -->
+        <div class="gk-field">
+          <label for="password">Password</label>
+          <div class="gk-input-wrap">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="gk-input"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            >
+            <i class="fa-solid fa-lock gk-input-icon"></i>
+            <button type="button" class="gk-pw-toggle" onclick="togglePassword()" id="pwToggle">
+              <i class="fa-regular fa-eye" id="pwToggleIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Forgot password -->
+        <div class="gk-field-row">
+          <a href="{% url 'forgotPassword' %}" class="gk-forgot-link">Forgot password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="gk-submit-btn">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+        </button>
       </form>
-      </div> <!-- card-body.// -->
-    </div> <!-- card .// -->
 
-     <p class="text-center mt-4">Don't have account? <a href="{% url 'register' %}">Sign up</a></p>
-     <br><br>
-<!-- ============================ COMPONENT LOGIN  END.// ================================= -->
-{% endif %}
+      <!-- Divider -->
+      <div class="gk-auth-divider">or continue with</div>
+
+      <!-- Social -->
+      <div class="gk-social-btns">
+        <a href="#" class="gk-social-btn">
+          <i class="fa-brands fa-google"></i> Google
+        </a>
+        <a href="#" class="gk-social-btn">
+          <i class="fa-brands fa-facebook-f"></i> Facebook
+        </a>
+      </div>
+    </div>
+
+    <!-- Sign up -->
+    <div class="gk-auth-footer">
+      Don't have an account? <a href="{% url 'register' %}">Create one free</a>
+    </div>
+
+  </div>
+  {% endif %}
 
 </section>
+
+<script>
+  function togglePassword() {
+    const input = document.getElementById('password');
+    const icon  = document.getElementById('pwToggleIcon');
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    icon.classList.toggle('fa-eye',       !isHidden);
+    icon.classList.toggle('fa-eye-slash',  isHidden);
+  }
+</script>
+
 {% endblock %}
