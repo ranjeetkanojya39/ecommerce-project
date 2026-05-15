@@ -1,0 +1,666 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  /* ── Payment Review Page ── */
+  .gk-payment-page {
+    max-width: 1280px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Heading */
+  .gk-payment-heading {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .gk-payment-heading h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  .gk-payment-heading p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  /* Progress steps */
+  .gk-checkout-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+  }
+  .gk-co-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .gk-co-step.done { color: #50c878; }
+  .gk-co-step.active { color: var(--accent); }
+  .gk-co-step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700;
+    background: var(--surface-2);
+    border: 1px solid var(--card-border);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .gk-co-step.done .gk-co-step-num {
+    background: rgba(80,200,120,0.12);
+    border-color: #50c878;
+    color: #50c878;
+  }
+  .gk-co-step.active .gk-co-step-num {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0a0a0f;
+    box-shadow: 0 0 0 4px rgba(232,201,126,0.15);
+  }
+  .gk-co-step-line {
+    height: 1px;
+    background: var(--card-border);
+    width: 60px;
+    margin: 0 0.5rem;
+  }
+  .gk-co-step-line.done { background: #50c878; }
+
+  /* ── Layout ── */
+  .gk-payment-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  /* ── Shared card ── */
+  .gk-p-card {
+    background: #13131c;
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+  .gk-p-card:last-child { margin-bottom: 0; }
+  .gk-p-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.02);
+  }
+  .gk-p-card-header i { color: var(--accent); font-size: 0.9rem; }
+  .gk-p-card-header h3 {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .gk-p-card-body { padding: 1.5rem; }
+
+  /* ── Billing address ── */
+  .gk-billing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .gk-billing-field {}
+  .gk-billing-field-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .gk-billing-field-value {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .gk-billing-field.full { grid-column: 1 / -1; }
+
+  .gk-order-note {
+    margin-top: 1rem;
+    background: rgba(232,201,126,0.06);
+    border: 1px solid rgba(232,201,126,0.15);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    grid-column: 1 / -1;
+  }
+  .gk-order-note-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 3px;
+  }
+  .gk-order-note p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* ── Products table ── */
+  .gk-review-table { width: 100%; }
+
+  .gk-review-thead {
+    display: grid;
+    grid-template-columns: 1fr 100px 140px;
+    gap: 1rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .gk-review-row {
+    display: grid;
+    grid-template-columns: 1fr 100px 140px;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--card-border);
+    transition: background 0.2s;
+  }
+  .gk-review-row:last-child { border-bottom: none; }
+  .gk-review-row:hover { background: rgba(255,255,255,0.015); border-radius: 8px; }
+
+  .gk-review-product {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+  }
+  .gk-review-img {
+    width: 58px; height: 58px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #0e0e18;
+    border: 1px solid var(--card-border);
+    flex-shrink: 0;
+  }
+  .gk-review-img img { width: 100%; height: 100%; object-fit: cover; }
+  .gk-review-info { min-width: 0; }
+  .gk-review-name {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+    transition: color 0.2s;
+  }
+  .gk-review-name:hover { color: var(--accent); }
+  .gk-review-vars {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .gk-var-tag {
+    background: rgba(232,201,126,0.08);
+    border: 1px solid rgba(232,201,126,0.15);
+    color: var(--accent);
+    font-size: 0.62rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .gk-review-qty {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gk-review-qty-badge {
+    background: rgba(232,201,126,0.1);
+    border: 1px solid rgba(232,201,126,0.2);
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .gk-review-price {}
+  .gk-review-subtotal {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+  .gk-review-unit {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ── Payment method badge ── */
+  .gk-payment-method-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .gk-pm-icon {
+    width: 48px; height: 48px;
+    background: rgba(0,100,255,0.1);
+    border: 1px solid rgba(0,100,255,0.2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    color: #4488ff;
+  }
+  .gk-pm-info strong {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .gk-pm-info span {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  /* ── Right side: totals + PayPal ── */
+  .gk-payment-sidebar {
+    position: sticky;
+    top: 88px;
+  }
+
+  .gk-totals-card {
+    background: #13131c;
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .gk-totals-header {
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.02);
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .gk-totals-body { padding: 1.25rem 1.5rem; }
+
+  .gk-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.45rem 0;
+    font-size: 0.875rem;
+  }
+  .gk-total-row dt { color: var(--text-muted); font-weight: 400; }
+  .gk-total-row dd { color: var(--text-primary); font-weight: 600; margin: 0; }
+  .gk-total-row dd.free { color: #50c878; }
+  .gk-total-divider { height: 1px; background: var(--card-border); margin: 0.85rem 0; }
+  .gk-grand-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+  }
+  .gk-grand-total-row dt {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .gk-grand-total-row dd {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  /* PayPal container */
+  .gk-paypal-card {
+    background: #13131c;
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .gk-paypal-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  #paypal-button-container { border-radius: 10px; overflow: hidden; }
+
+  /* Demo warning */
+  .gk-demo-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,180,50,0.07);
+    border: 1px solid rgba(255,180,50,0.2);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    font-size: 0.8rem;
+    color: #ffb432;
+    line-height: 1.5;
+  }
+  .gk-demo-notice i { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .gk-demo-notice strong { font-weight: 700; }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .gk-payment-grid { grid-template-columns: 1fr; }
+    .gk-payment-sidebar { position: static; }
+  }
+  @media (max-width: 640px) {
+    .gk-payment-page { padding: 0 1rem; }
+    .gk-billing-grid { grid-template-columns: 1fr; }
+    .gk-review-thead { display: none; }
+    .gk-review-row { grid-template-columns: 1fr; gap: 0.5rem; }
+    .gk-checkout-steps { display: none; }
+  }
+</style>
+
+
+<div class="gk-payment-page">
+
+  <!-- Heading -->
+  <div class="gk-payment-heading">
+    <h1>Review & Pay</h1>
+    <p>Confirm your order details before completing payment</p>
+  </div>
+
+  <!-- Progress steps -->
+  <div class="gk-checkout-steps">
+    <div class="gk-co-step done">
+      <span class="gk-co-step-num"><i class="fa-solid fa-check" style="font-size:0.55rem;"></i></span>
+      Cart
+    </div>
+    <div class="gk-co-step-line done"></div>
+    <div class="gk-co-step done">
+      <span class="gk-co-step-num"><i class="fa-solid fa-check" style="font-size:0.55rem;"></i></span>
+      Checkout
+    </div>
+    <div class="gk-co-step-line"></div>
+    <div class="gk-co-step active">
+      <span class="gk-co-step-num">3</span>
+      Payment
+    </div>
+    <div class="gk-co-step-line"></div>
+    <div class="gk-co-step">
+      <span class="gk-co-step-num">4</span>
+      Confirmed
+    </div>
+  </div>
+
+  <div class="gk-payment-grid">
+
+    <!-- ── Left: Review ── -->
+    <div>
+
+      <!-- Billing Address -->
+      <div class="gk-p-card">
+        <div class="gk-p-card-header">
+          <i class="fa-solid fa-location-dot"></i>
+          <h3>Billing Address</h3>
+        </div>
+        <div class="gk-p-card-body">
+          <div class="gk-billing-grid">
+            <div class="gk-billing-field">
+              <div class="gk-billing-field-label">Full Name</div>
+              <div class="gk-billing-field-value">{{ order.full_name }}</div>
+            </div>
+            <div class="gk-billing-field">
+              <div class="gk-billing-field-label">Email</div>
+              <div class="gk-billing-field-value">{{ order.email }}</div>
+            </div>
+            <div class="gk-billing-field">
+              <div class="gk-billing-field-label">Phone</div>
+              <div class="gk-billing-field-value">{{ order.phone }}</div>
+            </div>
+            <div class="gk-billing-field">
+              <div class="gk-billing-field-label">City & State</div>
+              <div class="gk-billing-field-value">{{ order.city }}, {{ order.state }}</div>
+            </div>
+            <div class="gk-billing-field full">
+              <div class="gk-billing-field-label">Address</div>
+              <div class="gk-billing-field-value">{{ order.full_address }}</div>
+            </div>
+            <div class="gk-billing-field">
+              <div class="gk-billing-field-label">Country</div>
+              <div class="gk-billing-field-value">{{ order.country }}</div>
+            </div>
+          </div>
+          {% if order.order_note %}
+          <div class="gk-order-note">
+            <div class="gk-order-note-label"><i class="fa-regular fa-note-sticky"></i> Order Note</div>
+            <p>{{ order.order_note }}</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="gk-p-card">
+        <div class="gk-p-card-header">
+          <i class="fa-solid fa-credit-card"></i>
+          <h3>Payment Method</h3>
+        </div>
+        <div class="gk-p-card-body">
+          <div class="gk-payment-method-display">
+            <div class="gk-pm-icon">
+              <i class="fa-brands fa-paypal"></i>
+            </div>
+            <div class="gk-pm-info">
+              <strong>PayPal</strong>
+              <span>Secure payment via PayPal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Review -->
+      <div class="gk-p-card">
+        <div class="gk-p-card-header">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <h3>Review Products</h3>
+        </div>
+        <div class="gk-p-card-body">
+          <div class="gk-review-thead">
+            <span>Product</span>
+            <span>Quantity</span>
+            <span>Price</span>
+          </div>
+
+          {% for cart_item in cart_items %}
+          <div class="gk-review-row">
+
+            <div class="gk-review-product">
+              <div class="gk-review-img">
+                <img src="{{ cart_item.product.images.url }}" alt="{{ cart_item.product.product_name }}">
+              </div>
+              <div class="gk-review-info">
+                <a href="{{ cart_item.product.get_url }}" class="gk-review-name">
+                  {{ cart_item.product.product_name }}
+                </a>
+                <div class="gk-review-vars">
+                  {% if cart_item.variations.all %}
+                    {% for item in cart_item.variations.all %}
+                      <span class="gk-var-tag">{{ item.variation_category|capfirst }}: {{ item.variation_value|capfirst }}</span>
+                    {% endfor %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="gk-review-qty">
+              <span class="gk-review-qty-badge">{{ cart_item.quantity }}</span>
+            </div>
+
+            <div class="gk-review-price">
+              <span class="gk-review-subtotal">${{ cart_item.sub_total }}</span>
+              <span class="gk-review-unit">${{ cart_item.product.price }} each</span>
+            </div>
+
+          </div>
+          {% endfor %}
+
+        </div>
+      </div>
+
+    </div><!-- /left col -->
+
+    <!-- ── Right: Totals + PayPal ── -->
+    <aside class="gk-payment-sidebar">
+
+      <!-- Totals -->
+      <div class="gk-totals-card">
+        <div class="gk-totals-header">Order Summary</div>
+        <div class="gk-totals-body">
+          <dl>
+            <div class="gk-total-row">
+              <dt>Subtotal</dt>
+              <dd>${{ total }}</dd>
+            </div>
+            <div class="gk-total-row">
+              <dt>Tax (GST)</dt>
+              <dd>${{ tax }}</dd>
+            </div>
+            <div class="gk-total-row">
+              <dt>Delivery</dt>
+              <dd class="free">Free</dd>
+            </div>
+          </dl>
+          <div class="gk-total-divider"></div>
+          <dl class="gk-grand-total-row">
+            <dt>Grand Total</dt>
+            <dd>${{ grand_total }}</dd>
+          </dl>
+        </div>
+      </div>
+
+      <!-- PayPal Button -->
+      <div class="gk-paypal-card">
+        <div class="gk-paypal-label">
+          <i class="fa-solid fa-lock" style="color:#50c878; margin-right:5px;"></i>
+          Secure Payment
+        </div>
+        <div id="paypal-button-container"></div>
+      </div>
+
+      <!-- Demo notice -->
+      <div class="gk-demo-notice">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span><strong>Demo Website</strong> — Please do not enter real payment details or attempt live transactions.</span>
+      </div>
+
+    </aside>
+  </div><!-- /grid -->
+</div><!-- /page -->
+
+
+<script>
+  // ── PayPal ──
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  var amount         = "{{ grand_total }}";
+  var url            = "{% url 'payments' %}";
+  var csrftoken      = getCookie('csrftoken');
+  var orderID        = "{{ order.order_number }}";
+  var payment_method = 'PayPal';
+  var redirect_url   = "{% url 'order_complete' %}";
+
+  paypal.Buttons({
+    style: {
+      color:  'gold',
+      shape:  'rect',
+      label:  'pay',
+      height: 44,
+    },
+
+    createOrder: function(data, actions) {
+      return actions.order.create({
+        purchase_units: [{ amount: { value: amount } }]
+      });
+    },
+
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+        sendData();
+        function sendData() {
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-type': 'application/json',
+              'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({
+              orderID:        orderID,
+              transID:        details.id,
+              payment_method: payment_method,
+              status:         details.status,
+            }),
+          })
+          .then(res  => res.json())
+          .then(data => {
+            window.location.href =
+              redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
+          });
+        }
+      });
+    },
+
+    onError: function(err) {
+      console.error('PayPal error:', err);
+    }
+
+  }).render('#paypal-button-container');
+</script>
+
+{% endblock %}
