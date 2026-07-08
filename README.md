@@ -49,7 +49,7 @@ GreatKart is a modular Django-based e-commerce platform developed to demonstrate
 
 ### 📸 Shopping Cart
 
-![Cart](docs/screenshots/cart.png)
+![Cart](docs/screenshots/cartt.png)
 
 ### 📸 Checkout
 
