@@ -1,209 +1,301 @@
+# 🛒 GreatKart — Django E-Commerce Platform
 
-🛒 GreatKart — Django E-Commerce Platform
+A full-stack e-commerce web application built with **Django**, featuring a complete shopping experience including product browsing, cart management, checkout, order processing, user authentication, and an admin dashboard.
 
-A full-stack e-commerce web application built with Django, featuring product catalog, cart, checkout, order management, and a clean, responsive UI.
+🌐 **Live Demo:** https://ecommerce-project-5-86b1.onrender.com
 
-🔗 Live Demo: ecommerce-project-5-86b1.onrender.com
+---
 
-Show Image
-Show Image
-Show Image
-Show Image
+# 📖 Project Overview
 
-</div>
+GreatKart is a modular Django-based e-commerce platform developed to demonstrate a complete online shopping workflow. The project follows Django's app-based architecture, making it easy to maintain, extend, and scale.
 
-📋 Table of Contents
+> 📸 **Home Page Screenshot**
+>
+> ![Home Page](docs/screenshots/home.png)
 
+---
 
-📖 Project Overview
-✨ Features
-🛠️ Tech Stack
-📂 Project Structure
-⚙️ Requirements
-🚀 Setup & Installation
-🔑 Environment Variables
-🗄️ Database & Migrations
-🎨 Static Files & Media
-▶️ Running the Project
-📸 Screenshots
-🧪 Tests
-🤝 Contributing
-⚠️ Notes
-📄 License
+# ✨ Features
 
+* 🛍️ Product Catalog with Categories
+* 🔍 Product Search
+* 📄 Product Detail Page
+* 🛒 Shopping Cart Management
+* 💳 Checkout & Order Placement
+* 👤 User Authentication (Register/Login)
+* 📦 Order Management
+* 🛠️ Django Admin Dashboard
 
+## Feature Details
 
-📖 Project Overview
+| Feature             | Description                                |
+| ------------------- | ------------------------------------------ |
+| 🛍️ Product Catalog | Browse products organized by categories    |
+| 🔍 Search           | Search products using keywords             |
+| 📄 Product Details  | Dedicated product detail page              |
+| 🛒 Cart Management  | Add, update, and remove products from cart |
+| 💳 Checkout         | Complete order placement process           |
+| 👤 Authentication   | User registration and login                |
+| 🛠️ Admin Panel     | Manage products, categories, and orders    |
 
-GreatKart is a Django-based e-commerce project built to demonstrate a complete full-stack e-commerce flow — from browsing products to placing an order. It's structured as multiple modular Django apps, making the codebase clean and easy to extend.
+### 📸 Product Listing
 
+![Product Listing](docs/screenshots/product-list.png)
 
-✨ Features
+### 📸 Product Details
 
-FeatureDescription🛍️ Product CatalogBrowse products organized by categories🔍 SearchSearch products by keyword📄 Product DetailsDedicated detail page for every product🛒 Cart ManagementAdd, update, and remove items from cart💳 Checkout & OrdersComplete checkout flow with order creation👤 User AuthenticationSign up, login, and account management🛠️ Admin PanelManage products, categories, and orders via Django Admin
+![Product Detail](docs/screenshots/product-detail.png)
 
+### 📸 Shopping Cart
 
-🛠️ Tech Stack
+![Cart](docs/screenshots/cart.png)
 
+### 📸 Checkout
 
-Backend: Python, Django
-Database: SQLite (development) — easily swappable with PostgreSQL/MySQL
-Frontend: HTML, CSS, JavaScript, Bootstrap
-Admin: Django's built-in admin interface
+![Checkout](docs/screenshots/checkout.png)
 
+### 📸 Admin Dashboard *(Optional)*
 
+![Admin Dashboard](docs/screenshots/admin.png)
 
-📂 Project Structure
+---
 
+# 🛠️ Tech Stack
+
+### Backend
+
+* Python
+* Django
+
+### Frontend
+
+* HTML5
+* CSS3
+* Bootstrap
+* JavaScript
+
+### Database
+
+* SQLite (Development)
+* Easily configurable for PostgreSQL or MySQL
+
+### Tools
+
+* Git
+* GitHub
+* Django Admin
+* Render (Deployment)
+
+---
+
+# 📂 Project Structure
+
+```text
 greatkart/
-├── accounts/              # 👤 User authentication & profiles
-├── cart/                  # 🛒 Shopping cart logic
-├── category/              # 🗂️ Product categories
-├── store/                 # 🏬 Main product store app
-├── orders/                # 📦 Order processing
-├── search/                 # 🔍 Search implementation
-├── greatkart_template/     # 🎨 Templates & example pages
-├── static/, staticfiles/   # 🎨 CSS, JS, images
-├── media/                  # 🖼️ Uploaded product images
-├── docs/screenshots/       # 📸 README screenshots (see below)
-├── db.sqlite3              # 🗄️ Development database
-├── manage.py                # ⚙️ Django management script
-└── requirements.txt          # 📜 Python dependencies
+│
+├── accounts/                # User Authentication
+├── cart/                    # Shopping Cart
+├── category/                # Product Categories
+├── store/                   # Product Management
+├── orders/                  # Order Processing
+├── search/                  # Search Functionality
+├── greatkart_template/      # Templates
+├── static/                  # Static Files
+├── staticfiles/             # Collected Static Files
+├── media/                   # Uploaded Images
+├── docs/
+│   └── screenshots/         # README Images
+│
+├── db.sqlite3
+├── manage.py
+├── requirements.txt
+└── README.md
+```
 
+---
 
-⚙️ Requirements
+# ⚙️ Requirements
 
-Make sure you have Python 3.x and pip installed. It's recommended to use a virtual environment.
+* Python 3.x
+* pip
+* Virtual Environment (Recommended)
 
-bashpip install -r requirements.txt
+Install dependencies:
 
-
-🚀 Setup & Installation
-
-bash# 1️⃣ Clone the repository
-git clone <your-repo-url>
-cd greatkart
-
-# 2️⃣ Create & activate a virtual environment
-python -m venv venv
-venv\Scripts\activate      # Windows
-source venv/bin/activate   # macOS/Linux
-
-# 3️⃣ Install dependencies
+```bash
 pip install -r requirements.txt
+```
 
+---
 
-🔑 Environment Variables
+# 🚀 Setup & Installation
 
-Create a .env file in the project root:
+### 1. Clone the Repository
 
-SECRET_KEY=your_django_secret_key
+```bash
+git clone <repository-url>
+cd greatkart
+```
+
+### 2. Create Virtual Environment
+
+**Windows**
+
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**macOS/Linux**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# 🔑 Environment Variables
+
+Create a `.env` file in the project root.
+
+```env
+SECRET_KEY=your_secret_key
+
 DEBUG=True
+
 ALLOWED_HOSTS=localhost,127.0.0.1
-DATABASE_URL=your_database_url   # optional, if not using default SQLite
 
+DATABASE_URL=your_database_url
+```
 
-Make sure settings.py is configured to read these values from the environment.
+Configure `settings.py` to load environment variables.
 
+---
 
+# 🗄️ Database & Migrations
 
+Run migrations:
 
-🗄️ Database & Migrations
+```bash
+python manage.py makemigrations
 
-The repo ships with a ready-to-use db.sqlite3. To start fresh:
-
-bashpython manage.py makemigrations
 python manage.py migrate
+```
 
-Create an admin/superuser account:
+Create Superuser:
 
-bashpython manage.py createsuperuser
+```bash
+python manage.py createsuperuser
+```
 
+---
 
-🎨 Static Files & Media
+# 🎨 Static Files
 
-Before deploying, collect static files:
+Collect static files before deployment.
 
-bashpython manage.py collectstatic
+```bash
+python manage.py collectstatic
+```
 
+Configure:
 
-Ensure MEDIA_ROOT and STATIC_ROOT are correctly set in settings.py for production.
+* STATIC_ROOT
+* STATICFILES_DIRS
+* MEDIA_ROOT
+* MEDIA_URL
 
+for production deployment.
 
+---
 
+# ▶️ Run the Project
 
-▶️ Running the Project
+```bash
+python manage.py runserver
+```
 
-bashpython manage.py runserver
+Open your browser:
 
-Then open 👉 http://127.0.0.1:8000/ in your browser.
+```
+http://127.0.0.1:8000/
+```
 
+---
 
-📸 Screenshots
+# 🧪 Running Tests
 
+```bash
+python manage.py test
+```
 
-📌 Yaha screenshots add karni hain. Ek docs/screenshots/ folder banao repo me, images upload karo, aur neeche diye gaye markdown ko unke sahi jagah par README me use karo.
+---
 
+# 🤝 Contributing
 
+Contributions are welcome!
 
-PageScreenshot PathPreview🏠 Home / Landing Pagedocs/screenshots/home.png![Home](docs/screenshots/home.png)🗂️ Product Listing / Category Pagedocs/screenshots/product-list.png![Product Listing](docs/screenshots/product-list.png)📄 Product Detail Pagedocs/screenshots/product-detail.png![Product Detail](docs/screenshots/product-detail.png)🛒 Cart Pagedocs/screenshots/cart.png![Cart](docs/screenshots/cart.png)💳 Checkout / Order Confirmationdocs/screenshots/checkout.png![Checkout](docs/screenshots/checkout.png)🛠️ Admin Dashboard (optional)docs/screenshots/admin.png![Admin Dashboard](docs/screenshots/admin.png)
+1. Fork the repository
 
-📍 Kaha insert karni hai (guide):
+2. Create a feature branch
 
+```bash
+git checkout -b feature/new-feature
+```
 
-Home page screenshot → Project Overview ke turant baad
-Product listing / detail screenshots → Features section ke niche
-Cart screenshot → Cart Management feature ke paas
-Checkout screenshot → Orders/Checkout section ke paas
-Admin dashboard screenshot → optional, ek alag "Admin Panel" subsection bana ke
+3. Commit your changes
 
+```bash
+git commit -m "Add new feature"
+```
 
-✅ Tip: Sab screenshots same resolution (jaise 1280x720) me rakho — README zyada professional aur clean dikhega.
+4. Push the branch
 
+```bash
+git push origin feature/new-feature
+```
 
-🧪 Tests
+5. Open a Pull Request
 
-Run tests (if available) with:
+Please include tests and update the documentation when applicable.
 
-bashpython manage.py test
+---
 
-(Agar abhi tests nahi likhe hain, to yeh section future me update kar sakte ho.)
+# ⚠️ Notes
 
+* This project includes `db.sqlite3` for development purposes.
+* Do not use the development database in production.
+* Set `DEBUG=False` before deployment.
+* Update `ALLOWED_HOSTS` for your production domain.
 
-🤝 Contributing
+---
 
-Contributions welcome! 🎉
+# 📄 License
 
+This project is intended for educational and portfolio purposes.
 
-🍴 Fork the repository
-🌿 Create a feature branch: git checkout -b feat/my-feature
-💾 Commit your changes and push
-🔁 Open a Pull Request describing your changes
+You may add the **MIT License** if you plan to make it open source.
 
+---
 
+# 👨‍💻 Author
 
-Please include tests and update the README if you add or change features.
+**Ranjeet Kanojiya**
 
+🎓 BCA Graduate
 
+💻 Aspiring Python & Django Backend Developer
 
+### Connect With Me
 
-⚠️ Notes
-
-
-This repo includes db.sqlite3 for development convenience. Remove or replace it before deploying to production or publishing sensitive data.
-Update ALLOWED_HOSTS and DEBUG=False before going live.
-
-
-
-📄 License
-
-This project is for educational / portfolio purposes. Add an MIT or other license file if you plan to open-source it.
-
-
-
-👤 Author
-
-Ranjeet — BCA Graduate | Aspiring Python/Django Backend Developer
-
-🔗 Portfolio: add link  |  💼 LinkedIn: add link  |  💻 GitHub: add link
-
+* 🌐 Portfolio: *Add Portfolio Link*
+* 💼 LinkedIn: *Add LinkedIn Profile*
+* 💻 GitHub: https://github.com/ranjeetkanojya39
